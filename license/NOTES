@@ -1,0 +1,20 @@
+This Json code is licensed by Persist Software 
+under the Apache 2 license.
+
+Other code used within Json.
+
+1. Scala (Scala License).
+
+2. ScalaTest (Apache 2 License).
+
+3. The Json parser is based on the example in
+   the Odersky Scala book (Typesafe License)
+   as modified by Twitter (Apache 2 License)
+   
+   https://github.com/stevej/scala-json/
+   
+   The code was then extensively rewritten 
+   for better performance by Persist Software
+   (Apache 2 License).
+
+
