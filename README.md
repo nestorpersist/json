@@ -6,7 +6,7 @@ It includes:
    3. A very fast Compact unparser that takes the Scala form and produces a compact single-line Json string.
    4. A Pretty unparser that takes the Scala form and produces a nicely formatted Json string.
    5. A set of methods for working with the Scala form that augment the existing standard collection methods.
-   6. (Planned) A mapper that converts between the Scala form and user-defined classes.
+   6. A mapper that converts between the Scala form and user-defined classes.
 
 ## Documentation
 
