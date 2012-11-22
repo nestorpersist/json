@@ -9,14 +9,9 @@ It includes:
    6. A mapper that converts between the Scala form and user-defined classes.
 
 ## Documentation
-
-ScalaDoc TBD.
-
-For now you can generate it by checking out
-the project and running the doc sbt command.
+1. [ScalaDoc](http://nestorpersist.github.com/json)
 
 ## History
-
 This parser started as part of the OStore NoSQL database
 project.
 
