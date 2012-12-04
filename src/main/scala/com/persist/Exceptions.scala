@@ -21,7 +21,7 @@ import com.persist.JsonOps._
 import scala.collection.immutable.HashMap
 
 /**
- * This object defines the Exceptions used within OStore.
+ * This object defines the Exceptions used within Persist-Json.
  */
 object Exceptions {
 
