@@ -11,6 +11,12 @@ It includes:
 ## Documentation
 1. [ScalaDoc](http://nestorpersist.github.com/json)
 
+## Reference
+
+Persist-Json can be referenced in sbt from Maven Central as
+
+ "com.persist" % "persist-json_2.9.2" % "0.9-RC1"
+
 ## History
 This parser started as part of the OStore NoSQL database
 project.
