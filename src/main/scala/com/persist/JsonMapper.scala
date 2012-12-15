@@ -19,6 +19,7 @@ package com.persist
 
 import JsonOps._
 import Exceptions._
+import scala.collection.immutable.HashMap
 
 /**
  * This object has methods that use reflection for converting between
@@ -45,6 +46,7 @@ import Exceptions._
  *  
  */
 object JsonMapper {
+  private[this] var infos = new HashMap[java.lang.Class[_], ClassInfo]() // access must be synchronized
 
   private def box(j: Json): AnyRef = {
     j match {
@@ -58,16 +60,18 @@ object JsonMapper {
 
   private class ClassInfo(clazz: java.lang.Class[_]) {
     // Note: works only on simple case classes
-    // TODO cache instances (thread safe)
-    val name = clazz.getName()
-    private val constructors = clazz.getConstructors()
-    private val constructor = constructors(0)
-    val types: List[java.lang.Class[_]] = constructor.getParameterTypes().toList
-    val names: List[String] = clazz.getDeclaredFields().map(_.getName()).toList
+    private[this] val name = clazz.getName()
+    private[this] val constructors = clazz.getConstructors()
+    private[this] val constructor = constructors(0)
+    private[this] val types: List[java.lang.Class[_]] = constructor.getParameterTypes().toList
+    def getTypes = types
+    private[this] val gtypes = constructor.getGenericParameterTypes()
+    private[this] val names: List[String] = clazz.getDeclaredFields().map(_.getName()).toList
+    def getNames = names
     def vals(x: Any): List[Any] = names.map(clazz.getDeclaredMethod(_).invoke(x))
     def apply(vals: List[AnyRef]) = constructor.newInstance(vals: _*)
-    def elemTypes: List[java.lang.Class[_]] = {
-      constructor.getGenericParameterTypes().map(gt => {
+    private[this] val elemTypes: List[java.lang.Class[_]] = {
+      gtypes.map(gt => {
         gt match {
           case t: java.lang.reflect.ParameterizedType => {
             val t1 = t.getActualTypeArguments()
@@ -80,6 +84,22 @@ object JsonMapper {
           case x => null
         }
       }).toList
+    }
+    private[this] val nte = (names zip (types zip elemTypes))
+    def getNTE = nte
+  }
+  
+  
+  private def getClassInfo(clazz: java.lang.Class[_]): ClassInfo = {
+    infos.synchronized(infos.get(clazz)) match {
+      case Some(ci:ClassInfo) => ci
+      case None => {
+        val ci = new ClassInfo(clazz)
+        infos.synchronized{
+           infos += (clazz->ci)
+        }
+        ci
+      }
     }
   }
 
@@ -101,9 +121,9 @@ object JsonMapper {
         }
         case map: Map[String, _] => map
         case obj => {
-          val ci = new ClassInfo(clazz)
-          val args = (ci.vals(x) zip ci.types) map { case (v, clazz1) => toJson(clazz1, v) }
-          (ci.names zip args).filter { case (n, v) => v != null }.toMap
+          val ci = getClassInfo(clazz)
+          val args = (ci.vals(x) zip ci.getTypes) map { case (v, clazz1) => toJson(clazz1, v) }
+          (ci.getNames zip args).filter { case (n, v) => v != null }.toMap
         }
       }
     } catch {
@@ -140,8 +160,8 @@ object JsonMapper {
           arr map (v => toObject(elemClazz, null, v))
         }
         case obj: JsonObject => {
-          val ci = new ClassInfo(clazz)
-          val args = (ci.names zip (ci.types zip ci.elemTypes)) map {
+          val ci = getClassInfo(clazz)
+          val args = ci.getNTE map {
             case (name, (clazz1, elemClazz)) => {
               toObject(clazz1, elemClazz, jget(j, name))
             }
