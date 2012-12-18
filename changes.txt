@@ -1,2 +1,6 @@
+12/18/2012 0.9-RC3
+   fixed number parse bug introduced in RC2
+   fixed multithread sync problem in object mapper
+   added unit tests
 12/15/2012 0.9-RC2
    Performance improvements

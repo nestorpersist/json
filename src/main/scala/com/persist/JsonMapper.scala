@@ -46,7 +46,7 @@ import scala.collection.immutable.HashMap
  *  
  */
 object JsonMapper {
-  private[this] var infos = new HashMap[java.lang.Class[_], ClassInfo]() // access must be synchronized
+  private[this] val infos = new collection.mutable.HashMap[java.lang.Class[_], ClassInfo]() // access must be synchronized
 
   private def box(j: Json): AnyRef = {
     j match {

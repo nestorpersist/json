@@ -211,11 +211,12 @@ private[persist] object JsonParse {
 
     private def handleDigit(chars: Chars) = {
       val first = chars.mark
-      var ch = chars.getCh
       getDigits(chars)
+      var ch = chars.getCh
       val k1 = if (ch == '.'.toInt) {
         ch = chars.next
         getDigits(chars)
+        ch = chars.getCh
         BIGNUMBER
       } else {
         NUMBER
