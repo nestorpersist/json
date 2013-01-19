@@ -48,6 +48,7 @@ class JsonTest extends FunSuite {
       """
     val j = Json(s)
     val c = Compact(j)
+    //println(Pretty(j))
     val j1 = Json(c)
     assert(j == j1, "same tree")
     assert(c == Compact(j1), "same string")

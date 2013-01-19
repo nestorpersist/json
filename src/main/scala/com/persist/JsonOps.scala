@@ -77,7 +77,7 @@ object JsonOps {
    *
    * A constructor for JsonObject.
    *
-   * @param Pairs a sequence of name value pairs.
+   * @param pairs a sequence of name value pairs.
    *
    * @return the constructed Json Object.
    */
@@ -456,6 +456,50 @@ object JsonOps {
    */
   def jgetLong(a: Json, ilist: Any*): Long = {
     jget(a, ilist: _*) match {
+      case l: Long => l
+      case i: Int => i
+      case x => 0
+    }
+  }
+
+  /**
+   *
+   * Get a big decimal value within a nested Json value.
+   *
+   * @param ilist a list of values that are either strings or integers
+   *  - A string selects the value of a JsonObject name-value pair where
+   *    the name equals the string.
+   *  - An integer i selects the ith elements of a JsonArray.
+   *
+   * @return the selected big decimal value or 0.0 if not present.
+   *
+   */
+  def jgetBigDecimal(a: Json, ilist: Any*): BigDecimal = {
+    jget(a, ilist: _*) match {
+      case b: BigDecimal => b
+      case d: Double => BigDecimal(d)
+      case l: Long => l
+      case i: Int => i
+      case x => 0
+    }
+  }
+
+  /**
+   *
+   * Get a double value within a nested Json value.
+   *
+   * @param ilist a list of values that are either strings or integers
+   *  - A string selects the value of a JsonObject name-value pair where
+   *    the name equals the string.
+   *  - An integer i selects the ith elements of a JsonArray.
+   *
+   * @return the selected double value or 0.0 if not present.
+   *
+   */
+  def jgetDouble(a: Json, ilist: Any*): Double = {
+    jget(a, ilist: _*) match {
+      case d: Double => d
+      case b: BigDecimal => b.toDouble
       case l: Long => l
       case i: Int => i
       case x => 0
