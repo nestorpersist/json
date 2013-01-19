@@ -13,9 +13,10 @@ It includes:
 
 ## Reference
 
-Persist-Json can be referenced in sbt from Maven Central as
+Persist-Json can be referenced in sbt from Maven Central as one of
 
-`"com.persist" % "persist-json_2.9.2" % "0.9-RC3"`
+`"com.persist" % "persist-json_2.9.2" % "0.9-RC4"`
+`"com.persist" % "persist-json_2.10.0" % "0.9-RC4"`
 
 ## History
 This parser started as part of the OStore NoSQL database
