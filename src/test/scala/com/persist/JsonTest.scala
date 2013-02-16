@@ -30,7 +30,7 @@ class JsonTest extends FunSuite {
     val s = """
       {
         "a":3,          // a comment
-        "b":"foo", 
+        "b":"foo/bar",
         c:17,           // quotes not needed on simple field names
         "d":[1,2,3,4,5],
         "e":false,

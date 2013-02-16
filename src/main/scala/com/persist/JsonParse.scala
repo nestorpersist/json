@@ -512,7 +512,7 @@ private[persist] object JsonUnparse {
           case 0x09 => "\\t"
           case 0x22 => "\\\""
           case 0x5c => "\\\\"
-          case 0x2f => "\\/" // to avoid sending "</"
+          //case 0x2f => "\\/" // to avoid sending "</"
           case c => quotedChar(c)
         }
     }.mkString("") + "\""
@@ -540,8 +540,8 @@ private[persist] object JsonUnparse {
             sb.append("]")
           }
         }
-        case m: Map[_, _] => {
-          val m2 = m.asInstanceOf[Map[String, Json]].iterator.toList
+        case m: scala.collection.Map[_, _] => {
+          val m2 = m.asInstanceOf[scala.collection.Map[String, Json]].iterator.toList
           val m1 = Sorting.stableSort[(String, Json), String](m2, {
             case (k, v) => k
           })
