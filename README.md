@@ -38,4 +38,12 @@ Twitter Json parser but is very much faster.
 Since the OStore Json parser has utility beyond its use in
 OStore, it was broken off as this separate Persist-Json GitHub project.
 
+## Thanks
+
+YourKit is kindly supporting the Persist-Json open source project with its full-featured Java Profiler.
+YourKit, LLC is the creator of innovative and intelligent tools for profiling
+Java and .NET applications. Take a look at YourKit's leading software products:
+[YourKit Java Profiler](http://www.yourkit.com/java/profiler/index.jsp) and
+[YourKit .NET Profiler](http://www.yourkit.com/.net/profiler/index.jsp).
+
 
