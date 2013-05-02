@@ -37,6 +37,10 @@ class MapperTest extends FunSuite {
                                  {name:"Tom", age:20}]
                         }""")
 
+    val mv = ToObject[Map[String,Json]](Map("a"->3,"b"->"foo"))
+    println("mv="+mv)
+    val iv = ToObject[Integer](17)
+    println("iv="+iv)
     val group: Group = ToObject[Group](j)
 
     val j1: Json = ToJson(group)

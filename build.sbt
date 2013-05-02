@@ -4,14 +4,14 @@ import AssemblyKeys._
 
 name := "persist-json"
 
-version := "0.10"
+version := "0.11"
 
-scalaVersion := "2.10.0"
+scalaVersion := "2.10.1"
 
 resolvers += "typesafe0" at "http://repo.typesafe.com/typesafe/releases"
 
 libraryDependencies ++=Seq(
-        "org.scala-lang" % "scala-reflect" % "2.10.0",
+        "org.scala-lang" % "scala-reflect" % "2.10.1",
         "org.scalatest" %% "scalatest" % "1.9.1" % "test",
         "junit" % "junit" % "4.10" % "test"
 )

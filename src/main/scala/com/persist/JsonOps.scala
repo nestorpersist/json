@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012 Persist Software
+ *  Copyright 2012-2012 Persist Software
  *  
  *   http://www.persist.com
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,15 +31,15 @@ import JsonUnparse._
  *
  * Scala types used for Json are
  *
- *  - Json Object. Immutable Map[String,Json]
- *     - Note that keys are not ordered.
- *    -  When converting to a string with Compact or Pretty
- *       keys are sorted.
- *  - Json Array. Immutable Seq[Json]
- *  - Json String. String
- *  - Json Boolean. Boolean
- *  - Json Number. Int, Long, BigDecimal (with .), Double (with e)
- *  - Json Null. Null
+ * - Json Object. Immutable Map[String,Json]
+ * - Note that keys are not ordered.
+ * -  When converting to a string with Compact or Pretty
+ * keys are sorted.
+ * - Json Array. Immutable Seq[Json]
+ * - Json String. String
+ * - Json Boolean. Boolean
+ * - Json Number. Int, Long, BigDecimal (with .), Double (with e)
+ * - Json Null. Null
  *
  * Any of the Json types can be at the top level
  * of a document (not just array and object).
@@ -47,11 +47,11 @@ import JsonUnparse._
  * The Json parser supports some extensions that are useful for human edited
  * Json input (such as configurations).
  *
- *   - Comments. The characters // to end of line are discarded during parsing.
- *   - Scala-like raw strings. Start with ""{ and end with }"". Treated as normal strings after parsing.
- *   - No quotes on simple names. If an object component name starts with a letter and contains
- *     only letters and digits the " quotes are not required. After parsing names with and without
- *     quotes are not distinguished.
+ * - Comments. The characters // to end of line are discarded during parsing.
+ * - Scala-like raw strings. Start with ""{ and end with }"". Treated as normal strings after parsing.
+ * - No quotes on simple names. If an object component name starts with a letter and contains
+ * only letters and digits the " quotes are not required. After parsing names with and without
+ * quotes are not distinguished.
  *
  */
 object JsonOps {
@@ -64,6 +64,14 @@ object JsonOps {
    *
    */
   type Json = Any
+
+
+  /**
+   *
+   * The Json null value.
+   *
+   */
+  val jnull = null.asInstanceOf[Json]
 
   /**
    *
@@ -146,9 +154,9 @@ object JsonOps {
    *
    * @param a the input Json value.
    * @param ilist a list of values that are either strings or integers
-   *  - A string selects the value of a JsonObject name-value pair where
-   *    the name equals the string.
-   *  - An integer i selects the ith elements of a JsonArray.
+   *              - A string selects the value of a JsonObject name-value pair where
+   *              the name equals the string.
+   *              - An integer i selects the ith elements of a JsonArray.
    *
    * @return the selected value or null if not present.
    *
@@ -159,10 +167,14 @@ object JsonOps {
     } else {
       val result = (a, ilist.head) match {
         case (a1: JsonArray, i1: Int) => {
-          if (0 <= i1 && i1 < a1.size) { a1(i1) } else { null }
+          if (0 <= i1 && i1 < a1.size) {
+            a1(i1)
+          } else {
+            null
+          }
         }
-        case (a1: scala.collection.Map[String,Json], i1: String) => {
-          a1.get(i1) match {
+        case (a1: scala.collection.Map[_, _], i1: String) => {
+          a1.asInstanceOf[scala.collection.Map[String, Json]].get(i1) match {
             case Some(v) => v
             case None => null
           }
@@ -179,9 +191,9 @@ object JsonOps {
    *
    * @param a the input Json value.
    * @param ilist a list of values that are either strings or integers
-   *  - A string selects the value of a JsonObject name-value pair where
-   *    the name equals the string.
-   *  - An integer i selects the ith elements of a JsonArray.
+   *              - A string selects the value of a JsonObject name-value pair where
+   *              the name equals the string.
+   *              - An integer i selects the ith elements of a JsonArray.
    *
    * @return true if the selected field is present.
    *
@@ -225,10 +237,10 @@ object JsonOps {
    *
    * @param a the input Json value.
    * @param ilist a list of values that are either strings or integers
-   *  - A string selects the value of a JsonObject name-value pair where
-   *    the name equals the string.
-   *  - An integer i selects the ith elements of a JsonArray.
-   *  @param v the new value.
+   *              - A string selects the value of a JsonObject name-value pair where
+   *              the name equals the string.
+   *              - An integer i selects the ith elements of a JsonArray.
+   * @param v the new value.
    *
    * @return a copy of the input with the value replaced.
    *
@@ -273,9 +285,9 @@ object JsonOps {
    *
    * @param a the input Json value.
    * @param ilist a list of values that are either strings or integers
-   *  - A string selects the value of a JsonObject name-value pair where
-   *    the name equals the string.
-   *  - An integer i selects the ith elements of a JsonArray.
+   *              - A string selects the value of a JsonObject name-value pair where
+   *              the name equals the string.
+   *              - An integer i selects the ith elements of a JsonArray.
    *
    * @return a copy of the input with the value replaced.
    *
@@ -320,13 +332,13 @@ object JsonOps {
    *
    * @param a the input Json value.
    * @param ilist a list of values that are either strings or integers
-   *  - A string selects the value of a JsonObject name-value pair where
-   *    the name equals the string.
-   *  - An integer i selects the ith elements of a JsonArray.
-   *  @param v the new value
+   *              - A string selects the value of a JsonObject name-value pair where
+   *              the name equals the string.
+   *              - An integer i selects the ith elements of a JsonArray.
+   * @param v the new value
    *
    * @return a copy of the input with the value inserted. For JsonArrays the value is inserted before the
-   * specified value.
+   *         specified value.
    *
    */
   def jinsert(a: Json, ilist: Any*)(v: Json): Json = {
@@ -366,9 +378,9 @@ object JsonOps {
   /**
    *
    * Get the size of a Json value.
-   *  - For a Json Object the number of name-value pairs.
-   *  - For a Json Array the number of elements.
-   *  - For anything else, 0.
+   * - For a Json Object the number of name-value pairs.
+   * - For a Json Array the number of elements.
+   * - For anything else, 0.
    *
    */
   def jsize(j: Json): Int = {
@@ -384,9 +396,9 @@ object JsonOps {
    * Get a string value within a nested Json value.
    *
    * @param ilist a list of values that are either strings or integers
-   *  - A string selects the value of a JsonObject name-value pair where
-   *    the name equals the string.
-   *  - An integer i selects the ith elements of a JsonArray.
+   *              - A string selects the value of a JsonObject name-value pair where
+   *              the name equals the string.
+   *              - An integer i selects the ith elements of a JsonArray.
    *
    * @return the selected string value or "" if not present.
    *
@@ -403,9 +415,9 @@ object JsonOps {
    * Get a boolean value within a nested Json value.
    *
    * @param ilist a list of values that are either strings or integers
-   *  - A string selects the value of a JsonObject name-value pair where
-   *    the name equals the string.
-   *  - An integer i selects the ith elements of a JsonArray.
+   *              - A string selects the value of a JsonObject name-value pair where
+   *              the name equals the string.
+   *              - An integer i selects the ith elements of a JsonArray.
    *
    * @return the selected boolean value or false if not present.
    *
@@ -422,9 +434,9 @@ object JsonOps {
    * Get an integer value within a nested Json value.
    *
    * @param ilist a list of values that are either strings or integers
-   *  - A string selects the value of a JsonObject name-value pair where
-   *    the name equals the string.
-   *  - An integer i selects the ith elements of a JsonArray.
+   *              - A string selects the value of a JsonObject name-value pair where
+   *              the name equals the string.
+   *              - An integer i selects the ith elements of a JsonArray.
    *
    * @return the selected integer value or 0 if not present.
    *
@@ -433,7 +445,11 @@ object JsonOps {
     jget(a, ilist: _*) match {
       case l: Long => {
         val i = l.toInt
-        if (i == l) { i } else { 0 }
+        if (i == l) {
+          i
+        } else {
+          0
+        }
       }
       case i: Int => i
       case x => 0
@@ -445,9 +461,9 @@ object JsonOps {
    * Get a long value within a nested Json value.
    *
    * @param ilist a list of values that are either strings or integers
-   *  - A string selects the value of a JsonObject name-value pair where
-   *    the name equals the string.
-   *  - An integer i selects the ith elements of a JsonArray.
+   *              - A string selects the value of a JsonObject name-value pair where
+   *              the name equals the string.
+   *              - An integer i selects the ith elements of a JsonArray.
    *
    * @return the selected long value or 0 if not present.
    *
@@ -465,9 +481,9 @@ object JsonOps {
    * Get a big decimal value within a nested Json value.
    *
    * @param ilist a list of values that are either strings or integers
-   *  - A string selects the value of a JsonObject name-value pair where
-   *    the name equals the string.
-   *  - An integer i selects the ith elements of a JsonArray.
+   *              - A string selects the value of a JsonObject name-value pair where
+   *              the name equals the string.
+   *              - An integer i selects the ith elements of a JsonArray.
    *
    * @return the selected big decimal value or 0.0 if not present.
    *
@@ -487,9 +503,9 @@ object JsonOps {
    * Get a double value within a nested Json value.
    *
    * @param ilist a list of values that are either strings or integers
-   *  - A string selects the value of a JsonObject name-value pair where
-   *    the name equals the string.
-   *  - An integer i selects the ith elements of a JsonArray.
+   *              - A string selects the value of a JsonObject name-value pair where
+   *              the name equals the string.
+   *              - An integer i selects the ith elements of a JsonArray.
    *
    * @return the selected double value or 0.0 if not present.
    *
@@ -509,9 +525,9 @@ object JsonOps {
    * Get a JsonArray value within a nested Json value.
    *
    * @param ilist a list of values that are either strings or integers
-   *  - A string selects the value of a JsonObject name-value pair where
-   *    the name equals the string.
-   *  - An integer i selects the ith elements of a JsonArray.
+   *              - A string selects the value of a JsonObject name-value pair where
+   *              the name equals the string.
+   *              - An integer i selects the ith elements of a JsonArray.
    *
    * @return the selected JsonArray value or an empty JsonArray if not present.
    *
@@ -528,9 +544,9 @@ object JsonOps {
    * Get a JsonObject value within a nested Json value.
    *
    * @param ilist a list of values that are either strings or integers
-   *  - A string selects the value of a JsonObject name-value pair where
-   *    the name equals the string.
-   *  - An integer i selects the ith elements of a JsonArray.
+   *              - A string selects the value of a JsonObject name-value pair where
+   *              the name equals the string.
+   *              - An integer i selects the ith elements of a JsonArray.
    *
    * @return the selected JsonObject value or an empty JsonObject if not present.
    *
@@ -547,25 +563,29 @@ object JsonOps {
    * An extractor for nested Json values.
    *
    * @param ilist a list of values that are either strings or integers
-   *  - A string selects the value of a JsonObject name-value pair where
-   *    the name equals the string.
-   *  - An integer i selects the ith elements of a JsonArray.
+   *              - A string selects the value of a JsonObject name-value pair where
+   *              the name equals the string.
+   *              - An integer i selects the ith elements of a JsonArray.
    *
-   *  @example {{{
-   *     val A = jfield("a")
-   *     val B = jfield("b")
-   *     val C = jfield("c")
-   *     jval match {
-   *       case a:A & b:B => foo(a,b)
-   *       case c:C => bar(c)
-   *     }
-   *  }}}
+   * @example {{{
+   *                         val A = jfield("a")
+   *                         val B = jfield("b")
+   *                         val C = jfield("c")
+   *                         jval match {
+   *                           case a:A & b:B => foo(a,b)
+   *                           case c:C => bar(c)
+   *                         }
+   *          }}}
    *
    */
   case class jfield(ilist: Any*) {
     def unapply(m: Json) = {
       val result = jget(m, ilist: _*)
-      if (result == null) { None } else { Some(result) }
+      if (result == null) {
+        None
+      } else {
+        Some(result)
+      }
     }
   }
 
@@ -574,14 +594,14 @@ object JsonOps {
    * An extractor composition operator.
    *
    * @example {{{
-   *     val A = jfield("a")
-   *     val B = jfield("b")
-   *     val C = jfield("c")
-   *     jval match {
-   *       case a:A & b:B => foo(a,b)
-   *       case c:C => bar(c)
-   *     }
-   *  }}}
+   *                         val A = jfield("a")
+   *                         val B = jfield("b")
+   *                         val C = jfield("c")
+   *                         jval match {
+   *                           case a:A & b:B => foo(a,b)
+   *                           case c:C => bar(c)
+   *                         }
+   *          }}}
    *
    */
   object & {

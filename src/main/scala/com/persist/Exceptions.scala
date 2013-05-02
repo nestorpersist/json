@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012 Persist Software
+ *  Copyright 2012-2013 Persist Software
  *  
  *   http://www.persist.com
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,19 +18,18 @@
 package com.persist
 
 import com.persist.JsonOps._
-import scala.collection.immutable.HashMap
 
 /**
  * This object defines the Exceptions used within Persist-Json.
  */
 object Exceptions {
 
-    /**
-     * This is the basic system exception.
-     * 
-     * @param kind the kind of Exception.
-     * @param info detailed information about the exception.
-     */
+  /**
+   * This is the basic system exception.
+   *
+   * @param kind the kind of Exception.
+   * @param info detailed information about the exception.
+   */
   class SystemException(val kind: String, val info: Json) extends Exception {
     /**
      * Produces a standard text form to OStore exceptions.
@@ -40,7 +39,7 @@ object Exceptions {
 
   /**
    * This subclass of SystemException is used for errors that occur parsing JSON. 
-   * 
+   *
    * @param msg the error message.
    * @param input the string being parsed.
    * @param line the line where the error occurred.
@@ -48,13 +47,14 @@ object Exceptions {
    */
   class JsonParseException(val msg: String, val input: String, val line: Int, val char: Int)
     extends SystemException("JsonParse", JsonObject("msg" -> msg, "line" -> line, "char" -> char, "input" -> input)) {
-    /** 
+    /**
      * There is a special version of toString for JSON parse errors.
      */
     def shortString() = {
       "[" + jgetInt(info, "line") + "," + jgetInt(info, "char") + "] " + jgetString(info, "msg")
-      
+
     }
+
     override def toString() = {
       shortString + " (" + jgetString(info, "input") + ")"
     }
