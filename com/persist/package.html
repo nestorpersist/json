@@ -2,24 +2,39 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
         <head>
-          <title>com.persist</title>
+          <title>persist - com.persist</title>
+          <meta name="description" content="persist - com.persist" />
+          <meta name="keywords" content="persist com.persist" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
-      <link type="text/css" media="screen" rel="stylesheet" href="../../lib/template.css" />
-      <script type="text/javascript" src="../../lib/jquery.js"></script>
+      <link href="../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../lib/jquery.js" id="jquery-js"></script>
       <script type="text/javascript" src="../../lib/jquery-ui.js"></script>
       <script type="text/javascript" src="../../lib/template.js"></script>
       <script type="text/javascript" src="../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../index.html';
+            var hash = 'com.persist.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
     
         </head>
-        <body onload="sh_highlightDocument('../lib/', '.min.js');" class="value">
+        <body class="value">
       <div id="definition">
         <img src="../../lib/package_big.png" />
-        <p id="owner"><a name="com" class="extype" href="../package.html">com</a></p>
+        <p id="owner"><a href="../package.html" class="extype" name="com">com</a></p>
         <h1>persist</h1>
       </div>
 
-      <h4 class="signature" id="signature">
+      <h4 id="signature" class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">package</span>
@@ -29,11 +44,11 @@
       </span>
       </h4>
       
-      <div class="fullcommenttop" id="comment"></div>
-    
+          <div id="comment" class="fullcommenttop"></div>
+        
 
       <div id="mbrsel">
-        <div id="textfilter"><span class="pre"></span><span class="input"><input accesskey="/" type="text" /></span><span class="post"></span></div>
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
         
         
         <div id="visbl">
@@ -50,9 +65,10 @@
 
         
 
-        <div class="values members" id="values">
+        <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li visbl="pub" name="com.persist.Exceptions" data-isabs="false">
+              <ol><li name="com.persist.Exceptions" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Exceptions"></a>
       <a id="Exceptions:Exceptions"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -60,11 +76,12 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="Exceptions$.html"><span class="name">Exceptions</span></a><span class="result"> extends AnyRef</span>
+        <a href="Exceptions$.html"><span class="name">Exceptions</span></a>
       </span>
       </h4>
       <p class="comment cmt">This object defines the Exceptions used within Persist-Json.</p>
-    </li><li visbl="pub" name="com.persist.JsonMapper" data-isabs="false">
+    </li><li name="com.persist.JsonMapper" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="JsonMapper"></a>
       <a id="JsonMapper:JsonMapper"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -72,12 +89,13 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="JsonMapper$.html"><span class="name">JsonMapper</span></a><span class="result"> extends AnyRef</span>
+        <a href="JsonMapper$.html"><span class="name">JsonMapper</span></a>
       </span>
       </h4>
       <p class="comment cmt">This object has methods that use reflection for converting between
 Json and user defined case classes.</p>
-    </li><li visbl="pub" name="com.persist.JsonOps" data-isabs="false">
+    </li><li name="com.persist.JsonOps" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="JsonOps"></a>
       <a id="JsonOps:JsonOps"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -85,7 +103,7 @@ Json and user defined case classes.</p>
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="JsonOps$.html"><span class="name">JsonOps</span></a><span class="result"> extends AnyRef</span>
+        <a href="JsonOps$.html"><span class="name">JsonOps</span></a>
       </span>
       </h4>
       <p class="comment cmt">Provides types and functions for working with Json types.</p>
@@ -93,10 +111,20 @@ Json and user defined case classes.</p>
             </div>
 
         
+
+        
         </div>
 
         <div id="inheritedMembers">
         
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
         </div>
 
       </div>
