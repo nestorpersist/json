@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012 Persist Software
+ *  Copyright 2012-2013 Persist Software
  *  
  *   http://www.persist.com
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,7 @@ import org.scalatest.FunSuite
 import com.persist.JsonOps._
 import com.persist.JsonMapper._
 
-case class Person(name: String, age: Option[Int])
+case class Person(name: String, age: Option[Int], friend: Option[Person])
 case class Group(city: String, people: Seq[Person], var cnt: Int, props: JsonObject)
 
 @RunWith(classOf[JUnitRunner])
@@ -33,16 +33,13 @@ class MapperTest extends FunSuite {
 
 
     val j: Json = Json("""{city:"Seattle", cnt:2, props:{i:1, j:2},
-                         people:[{name:"Joe"},
+                         people:[{name:"Joe", friend:{name:"Sam"}},
                                  {name:"Tom", age:20}]
                         }""")
 
     val mv = ToObject[Map[String,Json]](Map("a"->3,"b"->"foo"))
-    println("mv="+mv)
     val iv = ToObject[Integer](17)
-    println("iv="+iv)
     val group: Group = ToObject[Group](j)
-
     val j1: Json = ToJson(group)
 
     assert(j1 == j, "mapper fail")

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2012 Persist Software
+ *  Copyright 2012-2013 Persist Software
  *  
  *   http://www.persist.com
  *   Licensed under the Apache License, Version 2.0 (the "License");
