@@ -68,7 +68,13 @@ object JsonMapper {
     def getTypes = types
 
     private[this] val gtypes = constructor.getGenericParameterTypes()
-    private[this] val names: List[String] = clazz.getDeclaredFields().map(_.getName()).toList
+    private[this] val names: List[String] = clazz.getDeclaredFields().map {
+      case x =>
+        val name = x.getName()
+        // Remove _ from start of constructor parameter names
+        // Escape for reserved words (e.g. _type matches Json field "type")
+        if (name.startsWith("_")) name.substring(1) else name
+    }.toList
 
     def getNames = names
 
@@ -76,24 +82,32 @@ object JsonMapper {
 
     def apply(vals: List[AnyRef]) = constructor.newInstance(vals: _*)
 
-    private[this] val elemTypes: List[java.lang.Class[_]] = {
+    private[this] val elemTypes: List[(java.lang.Class[_], java.lang.Class[_])] = {
       gtypes.map(gt => {
         gt match {
           case t: java.lang.reflect.ParameterizedType => {
             val t1 = t.getActualTypeArguments()
             if (t1.size == 1) {
-              t1(0).asInstanceOf[java.lang.Class[_]]
+              t1(0) match {
+                case t2: java.lang.reflect.ParameterizedType =>
+                  val t3 = t2.getActualTypeArguments
+                  val t4 = t2.getRawType
+                  (t4.asInstanceOf[java.lang.Class[_]], t3(0).asInstanceOf[java.lang.Class[_]])
+                case t10 => (t10.asInstanceOf[java.lang.Class[_]], null)
+              }
             } else {
-              null
+              (null, null)
             }
           }
-          case x => null
+          case x =>
+            (null, null)
         }
       }).toList
     }
     private[this] val nte = (names zip (types zip elemTypes))
 
     def getNTE = nte
+
   }
 
 
@@ -139,7 +153,8 @@ object JsonMapper {
       }
     } catch {
       case se: SystemException => throw se
-      case ex: Throwable => throw new SystemException("JsonMapper", JsonObject("from" -> clazz.getName()))
+      case ex: Throwable =>
+        throw new SystemException("JsonMapper", JsonObject("from" -> clazz.getName()))
     }
   }
 
@@ -154,11 +169,14 @@ object JsonMapper {
     toJson(m.erasure, x)
   }
 
-  private def toObject(clazz: java.lang.Class[_], elemClazz: java.lang.Class[_], j: Json): AnyRef = {
+  private def toObject(clazz: java.lang.Class[_],
+                       elemClazz: java.lang.Class[_],
+                       elemClazz1: java.lang.Class[_],
+                       j: Json): AnyRef = {
     try {
       if (clazz == classOf[java.lang.Object]) return box(j)
       if (clazz == classOf[Map[String, _]]) return jgetObject(j)
-      if (clazz == classOf[Option[_]]) return if (j == null) None else Some(toObject(elemClazz, null, j))
+      if (clazz == classOf[Option[_]]) return if (j == null) None else Some(toObject(elemClazz, elemClazz1, null, j))
       j match {
         case s: String => s
         case i: Int => new java.lang.Integer(i)
@@ -167,14 +185,16 @@ object JsonMapper {
         case d: Double => new java.lang.Double(d)
         case bd: BigDecimal => bd
         case arr: JsonArray => {
-          val clazz1 = clazz.getTypeParameters()(0)
-          arr map (v => toObject(elemClazz, null, v))
+          arr map (v => {
+            toObject(elemClazz, elemClazz1, null, v)
+          })
         }
         case obj: JsonObject => {
           val ci = getClassInfo(clazz)
           val args = ci.getNTE map {
-            case (name, (clazz1, elemClazz)) => {
-              toObject(clazz1, elemClazz, jget(j, name))
+            case (name, (clazz1, (elemClazz, elemClazz1))) => {
+              val v = toObject(clazz1, elemClazz, elemClazz1, jget(j, name))
+              v
             }
           }
           val x = ci.apply(args).asInstanceOf[AnyRef]
@@ -197,7 +217,7 @@ object JsonMapper {
   def ToObject[T](j: Json)(implicit m: ClassManifest[T]): T = {
     val ta = m.typeArguments
     val t = if (ta.size == 1) ta.head.asInstanceOf[ClassManifest[_]].erasure else null
-    val x = toObject(m.erasure, t, j)
+    val x = toObject(m.erasure, t, null, j)
     x.asInstanceOf[T]
   }
 

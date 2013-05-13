@@ -24,7 +24,7 @@ import com.persist.JsonOps._
 import com.persist.JsonMapper._
 
 case class Person(name: String, age: Option[Int], friend: Option[Person])
-case class Group(city: String, people: Seq[Person], var cnt: Int, props: JsonObject)
+case class Group(city: String, people: Seq[Person], var cnt: Int, props: JsonObject, value:BigDecimal)
 
 @RunWith(classOf[JUnitRunner])
 class MapperTest extends FunSuite {
@@ -32,7 +32,7 @@ class MapperTest extends FunSuite {
   test("mapper") {
 
 
-    val j: Json = Json("""{city:"Seattle", cnt:2, props:{i:1, j:2},
+    val j: Json = Json("""{city:"Seattle", cnt:2, props:{i:1, j:2}, value:2.3,
                          people:[{name:"Joe", friend:{name:"Sam"}},
                                  {name:"Tom", age:20}]
                         }""")
