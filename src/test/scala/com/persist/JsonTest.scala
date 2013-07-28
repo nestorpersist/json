@@ -85,6 +85,9 @@ class JsonTest extends FunSuite {
       }
       case x => assert(false, "pattern fail")
     }
+
+    assert(jput(emptyJsonObject, "a")(3) === JsonObject("a"->3), "put failed")
+    assert(jput(emptyJsonObject, "a", "b")(3) === JsonObject("a"->JsonObject("b"->3)), "put failed")
   }
 
 }

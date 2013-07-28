@@ -26,16 +26,16 @@ import scala.collection.immutable.HashMap
  * Json and user defined case classes. Here is an example:
  *
  * {{{
- *  import com.persist.JsonOps._
- *  import com.persist.JsonMapper._
+ * import com.persist.JsonOps._
+ * import com.persist.JsonMapper._
  *
- *  case class Person(name:String, age:Option[Int])
- *  case class Group(city: String, people:Seq[Person], var cnt:Int, props:JsonObject)
+ * case class Person(name:String, age:Option[Int])
+ * case class Group(city: String, people:Seq[Person], var cnt:Int, props:JsonObject)
  *
- *  val j:Json = Json("""{city:"Seattle", cnt:2, props:{i:1, j:2},
- *                        people:[{name:"Joe"},
- * {name:"Tom", age:20}]
- * }""")
+ * val j:Json = Json("""{city:"Seattle", cnt:2, props:{i:1, j:2},
+ *                       people:[{name:"Joe"},
+ *                               {name:"Tom", age:20}]
+ *                      }""")
  *
  * val group:Group = ToObject[Group](j)
  *
@@ -50,6 +50,7 @@ object JsonMapper {
 
   private def box(j: Json): AnyRef = {
     j match {
+      case s: Short => new java.lang.Short(s)
       case i: Int => new java.lang.Integer(i)
       case l: Long => new java.lang.Long(l)
       case b: Boolean => new java.lang.Boolean(b)
@@ -127,6 +128,7 @@ object JsonMapper {
   private def toJson(clazz: java.lang.Class[_], x: Any): Json = {
     try {
       x match {
+        case s: Short => s
         case i: Int => i
         case l: Long => l
         case s: String => s
@@ -154,7 +156,7 @@ object JsonMapper {
     } catch {
       case se: SystemException => throw se
       case ex: Throwable =>
-        throw new SystemException("JsonMapper", JsonObject("from" -> clazz.getName()))
+        throw new SystemException("JsonMapper", JsonObject("from" -> clazz.getName(), "ex" -> ex.toString))
     }
   }
 
@@ -179,22 +181,46 @@ object JsonMapper {
       if (clazz == classOf[Option[_]]) return if (j == null) None else Some(toObject(elemClazz, elemClazz1, null, j))
       j match {
         case s: String => s
+        case s: Short => new java.lang.Short(s)
         case i: Int => new java.lang.Integer(i)
         case l: Long => new java.lang.Long(l)
         case b: Boolean => new java.lang.Boolean(b)
         case d: Double => new java.lang.Double(d)
         case bd: BigDecimal => bd
         case arr: JsonArray => {
-          arr map (v => {
-            toObject(elemClazz, elemClazz1, null, v)
+          //arr map (v => {
+          //  toObject(elemClazz, elemClazz1, null, v)
+          //})
+          arr.zipWithIndex map ((vi) => {
+            vi match {
+              case (v, i) =>
+                try {
+                  toObject(elemClazz, elemClazz1, null, v)
+                } catch {
+                  case ex: SystemException =>
+                    val j = jgetObject(ex.info)
+                    val path = i + "/" + jgetString(j, "to")
+                    val j1 = j + ("to" -> path)
+                    throw new SystemException(ex.kind, j1)
+                }
+            }
           })
         }
         case obj: JsonObject => {
           val ci = getClassInfo(clazz)
           val args = ci.getNTE map {
             case (name, (clazz1, (elemClazz, elemClazz1))) => {
-              val v = toObject(clazz1, elemClazz, elemClazz1, jget(j, name))
-              v
+              //val v = toObject(clazz1, elemClazz, elemClazz1, jget(j, name))
+              //v
+              try {
+                toObject(clazz1, elemClazz, elemClazz1, jget(j, name))
+              } catch {
+                case ex: SystemException =>
+                  val j = jgetObject(ex.info)
+                  val path = name + "/" + jgetString(j, "to")
+                  val j1 = j + ("to" -> path)
+                  throw new SystemException(ex.kind, j1)
+              }
             }
           }
           val x = ci.apply(args).asInstanceOf[AnyRef]

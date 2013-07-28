@@ -31,10 +31,9 @@ import JsonUnparse._
  *
  * Scala types used for Json are
  *
- * - Json Object. Immutable Map[String,Json]
- * - Note that keys are not ordered.
- * -  When converting to a string with Compact or Pretty
- * keys are sorted.
+ * - Json Object. Immutable Map[String,Json].
+ * Note that keys are not ordered.
+ * When converting to a string with Compact or Pretty keys are sorted.
  * - Json Array. Immutable Seq[Json]
  * - Json String. String
  * - Json Boolean. Boolean
@@ -264,14 +263,11 @@ object JsonOps {
           }
         }
         case (a1: JsonObject, i1: String) => {
-          if (a1.contains(i1)) {
-            if (ilist.size == 1) {
-              a1 + (i1 -> v)
-            } else {
-              a1 + (i1 -> jput(a1(i1), ilist.tail: _*)(v))
-            }
+          if (ilist.size == 1) {
+            a1 + (i1 -> v)
           } else {
-            a1
+            val a2 = if (a1.contains(i1)) a1(i1) else emptyJsonObject
+            a1 + (i1 -> jput(a2, ilist.tail: _*)(v))
           }
         }
         case _ => a
@@ -568,13 +564,13 @@ object JsonOps {
    *              - An integer i selects the ith elements of a JsonArray.
    *
    * @example {{{
-   *                         val A = jfield("a")
-   *                         val B = jfield("b")
-   *                         val C = jfield("c")
-   *                         jval match {
-   *                           case a:A & b:B => foo(a,b)
-   *                           case c:C => bar(c)
-   *                         }
+   *                                             val A = jfield("a")
+   *                                             val B = jfield("b")
+   *                                             val C = jfield("c")
+   *                                             jval match {
+   *                                               case a:A & b:B => foo(a,b)
+   *                                               case c:C => bar(c)
+   *                                             }
    *          }}}
    *
    */
@@ -594,13 +590,13 @@ object JsonOps {
    * An extractor composition operator.
    *
    * @example {{{
-   *                         val A = jfield("a")
-   *                         val B = jfield("b")
-   *                         val C = jfield("c")
-   *                         jval match {
-   *                           case a:A & b:B => foo(a,b)
-   *                           case c:C => bar(c)
-   *                         }
+   *                                             val A = jfield("a")
+   *                                             val B = jfield("b")
+   *                                             val C = jfield("c")
+   *                                             jval match {
+   *                                               case a:A & b:B => foo(a,b)
+   *                                               case c:C => bar(c)
+   *                                             }
    *          }}}
    *
    */

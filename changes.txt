@@ -1,6 +1,12 @@
+
+7/27/2013 0.14
+   Fix up scaladoc formating problems
+   Add mapper support for short
+   Better error reporting on ToObject
+   Fixed bug in jput
 5/13/2012 0.13
    Mapper now allows _ for key word escapes
-   (for example, use constructore name _type for Json field "type")
+   (for example, use constructor name _type for Json field "type")
    Mapper now supports case class parameters of type Option[Seq[T]]
 5/8/2013 0.12
    Fixed bug in mapper toJson method for Option types.
