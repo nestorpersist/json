@@ -46,20 +46,11 @@
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Provides types and functions for working with Json types.</p><p>Json is represented by immutable Scala types.
 Instead of having separate Json types, type aliases are
-defined for Json forms.</p><p>Scala types used for Json are</p><p>- Json Object. Immutable Map[String,Json].
-Note that keys are not ordered.
-When converting to a string with Compact or Pretty keys are sorted.
-- Json Array. Immutable Seq[Json]
-- Json String. String
-- Json Boolean. Boolean
-- Json Number. Int, Long, BigDecimal (with .), Double (with e)
-- Json Null. Null</p><p>Any of the Json types can be at the top level
+defined for Json forms.</p><p>Scala types used for Json are</p><ul><li>Json Object. Immutable Map[String,Json]. Note that keys are not ordered. When converting to a string with Compact or Pretty keys are sorted.</li><li>Json Array. Immutable Seq[Json]</li><li>Json String. String</li><li>Json Boolean. Boolean</li><li>Json Number. Int, Long, BigDecimal (with .), Double (with e)</li><li>Json Null. Null</li></ul><p>Any of the Json types can be at the top level
 of a document (not just array and object).</p><p>The Json parser supports some extensions that are useful for human edited
-Json input (such as configurations).</p><p>- Comments. The characters // to end of line are discarded during parsing.
-- Scala-like raw strings. Start with &quot;&quot;{ and end with }&quot;&quot;. Treated as normal strings after parsing.
-- No quotes on simple names. If an object component name starts with a letter and contains
+Json input (such as configurations).</p><ul><li>Comments. The characters // to end of line are discarded during parsing.</li><li>Scala-like raw strings. Start with &quot;&quot;{ and end with }&quot;&quot;. Treated as normal strings after parsing.</li><li>No quotes on simple names. If an object component name starts with a letter and contains
 only letters and digits the &quot; quotes are not required. After parsing names with and without
-quotes are not distinguished.</p></div><div class="toggleContainer block">
+quotes are not distinguished.</li></ul></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
