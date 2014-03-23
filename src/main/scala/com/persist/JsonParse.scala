@@ -619,21 +619,18 @@ private[persist] object JsonUnparse {
     }
   }
 
-  private[this] val WIDTH = 50
-  private[this] val COUNT = 6
-
-  private def split(s: Seq[String]): Boolean = {
-    s.size > COUNT ||
+  private def split(s: Seq[String], width: Int, count: Int): Boolean = {
+    s.size > count ||
       s.map(isMultiLine(_)).fold(false) {
         _ || _
       } ||
-      s.map(_.size).fold(0)(_ + _) + s.size + 2 > WIDTH
+      s.map(_.size).fold(0)(_ + _) + s.size + 2 > width
   }
 
   /**
    * Returns a pretty JSON representation of the given object
    */
-  def pretty(obj: Json, indent: Int = 0): String = {
+  def pretty(obj: Json, indent: Int = 0, width: Int = 50, count: Int = 6): String = {
     obj match {
       case null => doIndent("null", indent)
       case x: Boolean => doIndent(x.toString, indent)
@@ -642,7 +639,7 @@ private[persist] object JsonUnparse {
       case array: Array[Json] => pretty(array.toList, indent)
       case list: Seq[_] =>
         val strings = list.map(pretty(_))
-        if (!split(strings)) {
+        if (!split(strings, width, count)) {
           doIndent("[" + strings.mkString(",") + "]", indent)
         } else {
           wrap("[", ",", "]", indent, strings)
@@ -655,14 +652,14 @@ private[persist] object JsonUnparse {
           case (k, v) => {
             val v1 = pretty(v)
             val label = "\"" + quote(k.toString) + "\":"
-            if (isMultiLine(v1) || label.size + v1.size > WIDTH) {
+            if (isMultiLine(v1) || label.size + v1.size > width) {
               label + "\n" + doIndent(v1, 2)
             } else {
               label + v1
             }
           }
         }
-        if (!split(strings)) {
+        if (!split(strings, width, count)) {
           doIndent("{" + strings.mkString(",") + "}", indent)
         } else {
           wrap("{", ",", "}", indent, strings)

@@ -30,6 +30,7 @@ class JsonTest extends FunSuite {
     val s = """
       {
         "a":3,          // a comment
+        "as":4,
         "b":"foo/bar",
         c:17,           // quotes not needed on simple field names
         "d":[1,2,3,4,5],
@@ -45,10 +46,11 @@ class JsonTest extends FunSuite {
           with /multiple\ lines.
           }""
       }
-      """
+            """
     val j = Json(s)
+    jput(j, "js")(5.toShort) // test short value
     val c = Compact(j)
-    //println(Pretty(j))
+    val p = Pretty(j)
     val j1 = Json(c)
     assert(j == j1, "same tree")
     assert(c == Compact(j1), "same string")
@@ -86,8 +88,7 @@ class JsonTest extends FunSuite {
       case x => assert(false, "pattern fail")
     }
 
-    assert(jput(emptyJsonObject, "a")(3) === JsonObject("a"->3), "put failed")
-    assert(jput(emptyJsonObject, "a", "b")(3) === JsonObject("a"->JsonObject("b"->3)), "put failed")
+    assert(jput(emptyJsonObject, "a")(3) === JsonObject("a" -> 3), "put failed")
+    assert(jput(emptyJsonObject, "a", "b")(3) === JsonObject("a" -> JsonObject("b" -> 3)), "put failed")
   }
-
 }

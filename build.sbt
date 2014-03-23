@@ -4,9 +4,9 @@ import AssemblyKeys._
 
 name := "persist-json"
 
-version := "0.14"
+version := "0.15"
 
-scalaVersion := "2.10.1"
+scalaVersion := "2.10.3"
 
 resolvers += "typesafe0" at "http://repo.typesafe.com/typesafe/releases"
 

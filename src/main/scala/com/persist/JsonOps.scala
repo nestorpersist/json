@@ -31,9 +31,7 @@ import JsonUnparse._
  *
  * Scala types used for Json are
  *
- * - Json Object. Immutable Map[String,Json].
- * Note that keys are not ordered.
- * When converting to a string with Compact or Pretty keys are sorted.
+ * - Json Object. Immutable Map[String,Json]. Note that keys are not ordered. When converting to a string with Compact or Pretty keys are sorted.
  * - Json Array. Immutable Seq[Json]
  * - Json String. String
  * - Json Boolean. Boolean
@@ -142,9 +140,8 @@ object JsonOps {
    * designed for human readability.
    *
    */
-  def Pretty(j: Json): String = {
-    //pretty(j)
-    pretty(j)
+  def Pretty(j: Json, indent: Int = 0, width: Int = 50, count: Int = 6): String = {
+    pretty(j, indent, width, count)
   }
 
   /**
@@ -564,13 +561,13 @@ object JsonOps {
    *              - An integer i selects the ith elements of a JsonArray.
    *
    * @example {{{
-   *                                             val A = jfield("a")
-   *                                             val B = jfield("b")
-   *                                             val C = jfield("c")
-   *                                             jval match {
-   *                                               case a:A & b:B => foo(a,b)
-   *                                               case c:C => bar(c)
-   *                                             }
+   *                                                       val A = jfield("a")
+   *                                                       val B = jfield("b")
+   *                                                       val C = jfield("c")
+   *                                                       jval match {
+   *                                                         case a:A & b:B => foo(a,b)
+   *                                                         case c:C => bar(c)
+   *                                                       }
    *          }}}
    *
    */
@@ -590,13 +587,13 @@ object JsonOps {
    * An extractor composition operator.
    *
    * @example {{{
-   *                                             val A = jfield("a")
-   *                                             val B = jfield("b")
-   *                                             val C = jfield("c")
-   *                                             jval match {
-   *                                               case a:A & b:B => foo(a,b)
-   *                                               case c:C => bar(c)
-   *                                             }
+   *                                                       val A = jfield("a")
+   *                                                       val B = jfield("b")
+   *                                                       val C = jfield("c")
+   *                                                       jval match {
+   *                                                         case a:A & b:B => foo(a,b)
+   *                                                         case c:C => bar(c)
+   *                                                       }
    *          }}}
    *
    */
