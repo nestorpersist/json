@@ -630,15 +630,15 @@ private[persist] object JsonUnparse {
   /**
    * Returns a pretty JSON representation of the given object
    */
-  def pretty(obj: Json, indent: Int = 0, width: Int = 50, count: Int = 6): String = {
+  def pretty(obj: Json, indent: Int, width: Int, count: Int): String = {
     obj match {
       case null => doIndent("null", indent)
       case x: Boolean => doIndent(x.toString, indent)
       case x: Double => doIndent("%1$E".format(x), indent)
       case x: Number => doIndent(x.toString, indent)
-      case array: Array[Json] => pretty(array.toList, indent)
+      case array: Array[Json] => pretty(array.toList, indent, width, count)
       case list: Seq[_] =>
-        val strings = list.map(pretty(_))
+        val strings = list.map(pretty(_, indent, width, count))
         if (!split(strings, width, count)) {
           doIndent("[" + strings.mkString(",") + "]", indent)
         } else {
@@ -650,7 +650,7 @@ private[persist] object JsonUnparse {
         })
         val strings = seq2.map {
           case (k, v) => {
-            val v1 = pretty(v)
+            val v1 = pretty(v, indent, width, count)
             val label = "\"" + quote(k.toString) + "\":"
             if (isMultiLine(v1) || label.size + v1.size > width) {
               label + "\n" + doIndent(v1, 2)
