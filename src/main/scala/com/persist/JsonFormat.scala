@@ -1,6 +1,6 @@
 package com.persist
 
-import com.twitter.util.Try
+import scala.util.Try
 
 import JsonOps._
 import com.persist.Exceptions.MappingException
@@ -94,7 +94,7 @@ package object json {
           // If we get a mapping exception, intercept it and add the name of this field to the path
           // If we get another exception, don't touch!
           // Pitfall: if handle did not accept a PartialFunction, we could transform an unknow exception into a match exception
-          val head: F = Try(FHead.read(fieldValue)).handle{ case MappingException(msg, path) => throw MappingException(msg, s"$name/$path")}.get
+          val head: F = Try(FHead.read(fieldValue)).recover{ case MappingException(msg, path) => throw MappingException(msg, s"$name/$path")}.get
           val tail = FTail.read(json)
           head :: tail
         }
