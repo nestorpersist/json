@@ -5,7 +5,6 @@ import com.twitter.util.Try
 import JsonOps._
 import com.persist.Exceptions.MappingException
 import scala.annotation.implicitNotFound
-import scala.reflect.runtime.universe._
 
 import shapeless._
 import syntax.typeable._
@@ -27,16 +26,27 @@ package object json {
   }
 
   object ReadCodec extends LabelledProductTypeClassCompanion[ReadCodec] {
-    abstract class SimpleCodec[T: TypeTag] extends ReadCodec[T] {
-      def read(x: Json):T = Try(x.asInstanceOf[T]).getOrElse(throw new MappingException(s"Expected: ${typeOf[T]} but found $x"))
+    implicit object StringCodec extends ReadCodec[String] {
+      def read(x: Json): String = x.cast[String].getOrElse(throw new MappingException(s"Expected: String but found $x"))
     }
-    implicit object StringCodec extends SimpleCodec[String]
-    implicit object IntCodec extends SimpleCodec[Int]
-    implicit object BooleanCodec extends SimpleCodec[Boolean]
-    implicit object LongCodec extends SimpleCodec[Long]
-    implicit object ShortCodec extends SimpleCodec[Short]
-    implicit object DoubleCodec extends SimpleCodec[Double]
-    implicit object BigDecimalCodec extends SimpleCodec[BigDecimal]
+    implicit object IntCodec extends ReadCodec[Int] {
+      def read(x: Json): Int = x.cast[Int].getOrElse(throw new MappingException(s"Expected: Int but found $x"))
+    }
+    implicit object BooleanCodec extends ReadCodec[Boolean] {
+      def read(x: Json): Boolean = x.cast[Boolean].getOrElse(throw new MappingException(s"Expected: Boolean but found $x"))
+    }
+    implicit object LongCodec extends ReadCodec[Long] {
+      def read(x: Json): Long = x.cast[Long].getOrElse(throw new MappingException(s"Expected: Long but found $x"))
+    }
+    implicit object ShortCodec extends ReadCodec[Short] {
+      def read(x: Json): Short = x.cast[Short].getOrElse(throw new MappingException(s"Expected: Short but found $x"))
+    }
+    implicit object DoubleCodec extends ReadCodec[Double] {
+      def read(x: Json): Double = x.cast[Double].getOrElse(throw new MappingException(s"Expected: Double but found $x"))
+    }
+    implicit object BigDecimalCodec extends ReadCodec[BigDecimal] {
+      def read(x: Json): BigDecimal = x.cast[BigDecimal].getOrElse(throw new MappingException(s"Expected: BigDecimal but found $x"))
+    }
 
     def extractSeq[T: ReadCodec](json: Json): Seq[T] =
       json.cast[JsonArray].map(
@@ -89,6 +99,19 @@ package object json {
           head :: tail
         }
       }
+
+        // I wish this could work, then we could support Options in a nice way.
+        // TODO : Fix the compiler :P
+//      def product[A, T <: HList](name: String, FHead: ReadCodec[Option[A]], FTail: ReadCodec[T]) = new ReadCodec[Option[A] :: T] {
+//        def read(json: Json): Option[A] :: T = {
+//          val map = castOrThrow(json)
+//          val head: Option[A] = map.get(name).map { fieldValue =>
+//            Try(FHead.read(fieldValue)).handle{ case MappingException(msg, path) => throw MappingException(msg, s"$name/$path")}.get.get
+//          }
+//          val tail = FTail.read(json)
+//          head :: tail
+//        }
+//      }
 
       def project[F, G](instance: => ReadCodec[G], to : F => G, from : G => F) = new ReadCodec[F] {
         def read(json: Json): F = from(instance.read(json))
