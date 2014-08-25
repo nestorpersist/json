@@ -169,8 +169,8 @@ object JsonOps {
             null
           }
         }
-        case (a1: scala.collection.Map[_, _], i1: String) => {
-          a1.asInstanceOf[scala.collection.Map[String, Json]].get(i1) match {
+        case (a1: JsonObject @unchecked, i1: String) => {
+          a1.asInstanceOf[JsonObject].get(i1) match {
             case Some(v) => v
             case None => null
           }
@@ -210,7 +210,7 @@ object JsonOps {
             false
           }
         }
-        case (a1: JsonObject, i1: String) => {
+        case (a1: JsonObject @unchecked, i1: String) => {
           a1.get(i1) match {
             case Some(v) => {
               if (ilist.size == 1) {
@@ -259,7 +259,7 @@ object JsonOps {
             a1
           }
         }
-        case (a1: JsonObject, i1: String) => {
+        case (a1: JsonObject @ unchecked, i1: String) => {
           if (ilist.size == 1) {
             a1 + (i1 -> v)
           } else {
@@ -303,7 +303,7 @@ object JsonOps {
             a1
           }
         }
-        case (a1: JsonObject, i1: String) => {
+        case (a1: JsonObject @unchecked, i1: String) => {
           if (a1.contains(i1)) {
             if (ilist.size == 1) {
               a1 - i1
@@ -352,7 +352,7 @@ object JsonOps {
             a1
           }
         }
-        case (a1: JsonObject, i1: String) => {
+        case (a1: JsonObject @unchecked, i1: String) => {
           if (!a1.contains(i1)) {
             if (ilist.size == 1) {
               a1 + (i1 -> v)
@@ -378,7 +378,7 @@ object JsonOps {
    */
   def jsize(j: Json): Int = {
     j match {
-      case a1: JsonObject => a1.size
+      case a1: JsonObject@unchecked => a1.size
       case a1: JsonArray => a1.size
       case x => 0
     }
@@ -546,7 +546,7 @@ object JsonOps {
    */
   def jgetObject(a: Json, ilist: Any*): JsonObject = {
     jget(a, ilist: _*) match {
-      case m: JsonObject => m
+      case m: JsonObject @unchecked => m
       case x => emptyJsonObject
     }
   }

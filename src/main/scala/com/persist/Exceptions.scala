@@ -60,5 +60,11 @@ object Exceptions {
     }
   }
 
-}
+  /**
+   * This subclass of SystemException is used for errors that occur during mapping to or from a Scala object.
+   *
+   * @param msg the error message.
+   */
+  case class MappingException(val msg: String, val path: String = "") extends SystemException("Mapping", JsonObject("msg" -> msg, "path" -> path))
 
+}

@@ -206,7 +206,7 @@ object JsonMapper {
             }
           })
         }
-        case obj: JsonObject => {
+        case obj: JsonObject @unchecked => {
           val ci = getClassInfo(clazz)
           val args = ci.getNTE map {
             case (name, (clazz1, (elemClazz, elemClazz1))) => {

@@ -6,14 +6,18 @@ name := "persist-json"
 
 version := "0.17-SNAPSHOT"
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.2"
 
 resolvers += "typesafe0" at "http://repo.typesafe.com/typesafe/releases"
 
+resolvers ++= Seq("snapshots", "releases").map(Resolver.sonatypeRepo)
+
 libraryDependencies ++= Seq(
         "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-        "org.scalatest" %% "scalatest" % "2.2.0" % "test",
-        "junit" % "junit" % "4.10" % "test"
+        "com.chuusai" %% "shapeless" % "2.0.0",
+        "org.scalatest" %% "scalatest" % "2.2.1" % "test",
+        "org.specs2" %% "specs2" % "2.4.1" % "test",
+        "junit" % "junit" % "4.11" % "test"
 )
 
 crossScalaVersions := Seq("2.10.4")
