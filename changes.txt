@@ -1,5 +1,6 @@
 8/25/2014
    Upgrade to Scala 2.11
+   Add new to/from Json codex
 3/24/2014 0.16
    Fixed bug in Pretty options.
 3/22/2014 0.15
