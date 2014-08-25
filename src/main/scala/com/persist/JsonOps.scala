@@ -169,8 +169,10 @@ object JsonOps {
             null
           }
         }
-        case (a1: scala.collection.Map[_, _], i1: String) => {
-          a1.asInstanceOf[scala.collection.Map[String, Json]].get(i1) match {
+        //case (a1: scala.collection.Map[_, _], i1: String) => {
+          //a1.asInstanceOf[scala.collection.Map[String, Json]].get(i1) match {
+            case (a1: scala.collection.Map[_, _], i1: String) => {
+              a1.asInstanceOf[scala.collection.Map[String, Json]].get(i1) match {
             case Some(v) => v
             case None => null
           }

@@ -16,7 +16,7 @@ libraryDependencies ++= Seq(
         "junit" % "junit" % "4.10" % "test"
 )
 
-crossScalaVersions := Seq("2.10.4")
+crossScalaVersions := Seq("2.11.1")
 
 assemblySettings
 
