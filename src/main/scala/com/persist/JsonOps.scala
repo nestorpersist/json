@@ -171,11 +171,8 @@ object JsonOps {
         }
         //case (a1: JsonObject @unchecked, i1: String) => {
         //  a1.asInstanceOf[JsonObject].get(i1) match {
-        case (a1: scala.collection.Map[_, _], i1: String) => {
-          a1.asInstanceOf[scala.collection.Map[String, Json]].get(i1) match {
-            case Some(v) => v
-            case None => null
-          }
+        case (a1: scala.collection.Map[String, Json] @unchecked, i1: String) => {
+          a1.getOrElse(i1, null)
         }
         case _ => null
       }
