@@ -26,26 +26,72 @@ package object json {
   }
 
   object ReadCodec extends LabelledProductTypeClassCompanion[ReadCodec] {
-    implicit object StringCodec extends ReadCodec[String] {
+    implicit val string = new ReadCodec[String] {
       def read(x: Json): String = x.cast[String].getOrElse(throw new MappingException(s"Expected: String but found $x"))
     }
-    implicit object IntCodec extends ReadCodec[Int] {
-      def read(x: Json): Int = x.cast[Int].getOrElse(throw new MappingException(s"Expected: Int but found $x"))
+    implicit val int = new ReadCodec[Int] {
+      def read(x: Json): Int = x match {
+        case x: Int => x
+        case x: Short => x.toInt
+        case x: Long =>
+          if (x <= Int.MaxValue) x.toInt
+          else throw new MappingException(s"Expected number that can fit into an Int, but found $x")
+        case _ => throw new MappingException(s"Expected: Int but found $x")
+      }
     }
-    implicit object BooleanCodec extends ReadCodec[Boolean] {
+    implicit val boolean = new ReadCodec[Boolean] {
       def read(x: Json): Boolean = x.cast[Boolean].getOrElse(throw new MappingException(s"Expected: Boolean but found $x"))
     }
-    implicit object LongCodec extends ReadCodec[Long] {
-      def read(x: Json): Long = x.cast[Long].getOrElse(throw new MappingException(s"Expected: Long but found $x"))
+    implicit val long = new ReadCodec[Long] {
+      def read(x: Json): Long = x match {
+        case x: Int => x.toLong
+        case x: Short => x.toLong
+        case x: Long => x
+        case _ => throw new MappingException(s"Expected: Long but found $x")
+      }
     }
-    implicit object ShortCodec extends ReadCodec[Short] {
-      def read(x: Json): Short = x.cast[Short].getOrElse(throw new MappingException(s"Expected: Short but found $x"))
+    implicit val short = new ReadCodec[Short] {
+      def precisionException(num: Any) = throw new MappingException(s"Expected number that can fit into a Short, but found $num")
+      def read(x: Json): Short = x match {
+        case x: Int =>
+           if (x <= Short.MaxValue) x.toShort
+           else precisionException(x)
+        case x: Short => x
+        case x: Long =>
+          if (x <= Short.MaxValue) x.toShort
+          else precisionException(x)
+        case _ => throw new MappingException(s"Expected: Short, but found $x")
+      }
     }
-    implicit object DoubleCodec extends ReadCodec[Double] {
-      def read(x: Json): Double = x.cast[Double].getOrElse(throw new MappingException(s"Expected: Double but found $x"))
+    implicit val double = new ReadCodec[Double] {
+      def read(x: Json): Double = x match {
+        case x: Int => x.toDouble
+        case x: Short => x.toDouble
+        case x: Long => x.toDouble
+        case x: Double => x
+        case _ => throw new MappingException(s"Expected: Double, but found $x")
+      }
     }
-    implicit object BigDecimalCodec extends ReadCodec[BigDecimal] {
-      def read(x: Json): BigDecimal = x.cast[BigDecimal].getOrElse(throw new MappingException(s"Expected: BigDecimal but found $x"))
+    implicit val float = new ReadCodec[Float] {
+      def read(x: Json): Float = x match {
+        case x: Float => x
+        case x: Double => x.toFloat
+        case x: Int => x.toFloat
+        case x: Short => x.toFloat
+        case x: Long => x.toFloat
+        case _ => throw new MappingException(s"Expected Float, but found $x")
+      }
+    }
+    implicit val bigDecimal = new ReadCodec[BigDecimal] {
+      def read(x: Json): BigDecimal = x match {
+        case x: BigDecimal => x
+        case x: Float => BigDecimal(x)
+        case x: Double => BigDecimal(x)
+        case x: Int => BigDecimal(x)
+        case x: Short => BigDecimal(x)
+        case x: Long => BigDecimal(x)
+        case _ => throw new MappingException(s"Expected BigDecimal, but found $x")
+      }
     }
 
     def extractSeq[T: ReadCodec](json: Json): Seq[T] =
@@ -175,6 +221,6 @@ package object json {
     }
   }
 
-  def toJson[T](obj: T)(implicit ev: WriteCodec[T]): Json = ev.write(obj)
-  def read[T](json: Json)(implicit ev: ReadCodec[T]): T = ev.read(json)
+  def toJson[T](obj: T)(implicit codec: WriteCodec[T]): Json = codec.write(obj)
+  def read[T](json: Json)(implicit codec: ReadCodec[T]): T = codec.read(json)
 }

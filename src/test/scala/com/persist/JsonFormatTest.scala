@@ -17,7 +17,7 @@
 
 package com.persist
 
-import com.persist.json.WriteCodec
+import com.persist.json.{ReadCodec, WriteCodec}
 import org.specs2.mutable._
 import com.persist.JsonOps._
 
@@ -26,6 +26,11 @@ case class Individual(name: String, age: Option[Int], friend: Option[Ref])
 case class Meetup(city: String, people: Seq[Individual], cnt: Int, props: JsonObject/*, value:BigDecimal*/)
 case class Meetup1(city: String, people: Seq[Individual], cnt: Int, props: Map[String, Any]/*, value:BigDecimal*/)
 case class Meetup2(city: String, people: Seq[Individual], cnt: Int)
+
+case class FullTrip(s: Short, l: Long)
+
+import WriteCodec.auto.{derive => writeDerive}
+import ReadCodec.auto.{derive => readDerive}
 
 class JsonFormatTest extends Specification {
 
@@ -37,17 +42,12 @@ class JsonFormatTest extends Specification {
 
       val p = Individual("Bill", Some(45), Some(Ref("Bob")))
 
-      import WriteCodec.auto._
-
-
       val j = json.toJson(individual)
 
       j ==== expectedP
     }
 
     "Seq" in {
-      import WriteCodec.auto._
-
       val m = Meetup2("Montreal", List(individual), 1)
       val j = json.toJson(m)
       val expected = JsonObject("city" -> "Montreal", "people" -> JsonArray(expectedP), "cnt" -> 1)
@@ -81,5 +81,14 @@ class JsonFormatTest extends Specification {
 //      val expected = JsonObject("hello" -> true)
 //      j ==== expected
 //    }
+    "full trip" in {
+      val test = FullTrip(4, 4)
+      val jsonValue = json.toJson(test)
+      val stringValue = Compact(jsonValue)
+      val otherJsonValue = Json(stringValue)
+      implicit val ft = ReadCodec[FullTrip]
+      val otherTest = json.read[FullTrip](otherJsonValue)
+      test ==== otherTest
+    }
   }
 }
