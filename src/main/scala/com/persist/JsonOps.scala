@@ -130,8 +130,8 @@ object JsonOps {
    * A Json unparser. It produces the most compact single line string form.
    *
    */
-  def Compact(j: Json): String = {
-    compact(j)
+  def Compact(j: Json, safe:Boolean = false): String = {
+    compact(j, safe)
   }
 
   /**
@@ -140,8 +140,8 @@ object JsonOps {
    * designed for human readability.
    *
    */
-  def Pretty(j: Json, indent: Int = 0, width: Int = 50, count: Int = 6): String = {
-    pretty(j, indent, width, count)
+  def Pretty(j: Json, indent: Int = 0, width: Int = 50, count: Int = 6, safe:Boolean = false): String = {
+    pretty(j, indent, width, count, safe)
   }
 
   /**

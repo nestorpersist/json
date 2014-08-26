@@ -528,7 +528,7 @@ private[persist] object JsonUnparse {
     }.mkString("")
   }
 
-  def compact(obj: Json): String = {
+  def compact(obj: Json, safe: Boolean): String = {
     val sb = new StringBuilder(1000)
     //val sb = SB(1000)
     def compact1(obj1: Json) {
@@ -544,7 +544,8 @@ private[persist] object JsonUnparse {
         case x: Number => sb.append(x.toString)
         case null => sb.append("null")
         case x: Boolean => sb.append(x.toString)
-        case x: Double => sb.append("%1$E".format(x))
+        case x: Double =>
+          sb.append("%1$g".format(x))
         case list: Seq[_] => {
           if (list.isEmpty) {
             sb.append("[]")
@@ -579,7 +580,12 @@ private[persist] object JsonUnparse {
             sb.append("}")
           }
         }
-        case x => throw new SystemException("JsonUnparse", JsonObject("msg" -> "bad json value", "value" -> x.toString()))
+        case x => if (safe) {
+          val bad = JsonObject("BAD1" -> x.toString)
+          compact1(bad)
+        } else {
+          throw new SystemException("JsonUnparse", JsonObject("msg" -> "bad json value", "value" -> x.toString()))
+        }
       }
     }
     compact1(obj)
@@ -630,15 +636,15 @@ private[persist] object JsonUnparse {
   /**
    * Returns a pretty JSON representation of the given object
    */
-  def pretty(obj: Json, indent: Int, width: Int, count: Int): String = {
+  def pretty(obj: Json, indent: Int, width: Int, count: Int, safe: Boolean): String = {
     obj match {
       case null => doIndent("null", indent)
       case x: Boolean => doIndent(x.toString, indent)
-      case x: Double => doIndent("%1$E".format(x), indent)
+      case x: Double => doIndent("%1$g".format(x), indent)
       case x: Number => doIndent(x.toString, indent)
-      case array: Array[Json] => pretty(array.toList, indent, width, count)
+      case array: Array[Json] => pretty(array.toList, indent, width, count, safe)
       case list: Seq[_] =>
-        val strings = list.map(pretty(_, indent, width, count))
+        val strings = list.map(pretty(_, indent, width, count, safe))
         if (!split(strings, width, count)) {
           doIndent("[" + strings.mkString(",") + "]", indent)
         } else {
@@ -650,7 +656,7 @@ private[persist] object JsonUnparse {
         })
         val strings = seq2.map {
           case (k, v) => {
-            val v1 = pretty(v, indent, width, count)
+            val v1 = pretty(v, indent, width, count, safe)
             val label = "\"" + quote(k.toString) + "\":"
             if (isMultiLine(v1) || label.size + v1.size > width) {
               label + "\n" + doIndent(v1, 2)
@@ -665,10 +671,14 @@ private[persist] object JsonUnparse {
           wrap("{", ",", "}", indent, strings)
         }
       case s: String => doIndent("\"" + quote(s) + "\"", indent)
-      case x => {
-        throw new SystemException("JsonUnparse", JsonObject("msg" -> "bad json value", "value" -> x.toString()))
-      }
+      case x =>
+        if (safe) {
+          val bad = JsonObject("BAD" -> x.toString)
+          pretty(bad, indent, width, count, safe)
+        } else {
+          throw new SystemException("JsonUnparse", JsonObject("msg" -> "bad json value", "value" -> x.toString()))
+        }
     }
   }
-
 }
+
