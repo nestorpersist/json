@@ -4,7 +4,7 @@ import AssemblyKeys._
 
 name := "persist-json"
 
-version := "0.17"
+version := "0.18"
 
 scalaVersion := "2.11.1"
 
