@@ -175,6 +175,6 @@ package object json {
     }
   }
 
-  def toJson[T](obj: T)(implicit ev: WriteCodec[T]): Json = ev.write(obj)
-  def read[T](json: Json)(implicit ev: ReadCodec[T]): T = ev.read(json)
+  def toJson[T](obj: T)(implicit codec: WriteCodec[T]): Json = codec.write(obj)
+  def read[T](json: Json)(implicit codec: ReadCodec[T]): T = codec.read(json)
 }
