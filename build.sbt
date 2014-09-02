@@ -8,10 +8,6 @@ version := "0.18"
 
 scalaVersion := "2.11.1"
 
-resolvers += "typesafe0" at "http://repo.typesafe.com/typesafe/releases"
-
-resolvers ++= Seq("snapshots", "releases").map(Resolver.sonatypeRepo)
-
 libraryDependencies ++= Seq(
         "org.scala-lang" % "scala-reflect" % scalaVersion.value,
         "com.chuusai" %% "shapeless" % "2.0.0",
