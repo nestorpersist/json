@@ -43,7 +43,11 @@ pomExtra := (
       <email>nestor@persist.com</email>
       <url>http://http://www.persist.com</url>
     </developer>
+    <developer>
+      <id>jedesah</id>
+      <name>Jean-Remi Desjardins</name>
+      <email>jeanremi.desjardins@gmail.com</email>
+      <url>https://github.com/jedesah</url>
+    </developer>
   </developers>
 )
-
-
