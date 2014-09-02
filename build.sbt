@@ -1,10 +1,7 @@
-import sbtassembly.Plugin._
-
-import AssemblyKeys._
-
 name := "persist-json"
 
-version := "0.18"
+organization := "com.persist"
+
 
 scalaVersion := "2.11.1"
 
@@ -16,14 +13,6 @@ libraryDependencies ++= Seq(
         "junit" % "junit" % "4.11" % "test"
 )
 
-crossScalaVersions := Seq("2.11.1")
-
-assemblySettings
-
-test in assembly := {}
-
-jarName in assembly := "persist-json-0.1.jar"
-
 publishTo <<= version { v: String =>
   val nexus = "https://oss.sonatype.org/"
   if (v.trim.endsWith("SNAPSHOT"))
@@ -31,8 +20,6 @@ publishTo <<= version { v: String =>
   else
     Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
-
-organization := "com.persist"
 
 publishMavenStyle := true
 
