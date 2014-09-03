@@ -29,6 +29,11 @@ package object json {
     implicit val string = new ReadCodec[String] {
       def read(x: Json): String = x.cast[String].getOrElse(throw new MappingException(s"Expected: String but found $x"))
     }
+    implicit val char = new ReadCodec[Char] {
+      def read(x: Json): Char = x.cast[String].filter(_.length == 1).map(_.charAt(0)).getOrElse(
+        throw new MappingException(s"Expected String of length one but found $x")
+      )
+    }
     implicit val int = new ReadCodec[Int] {
       def read(x: Json): Int = x match {
         case x: Int => x
@@ -92,6 +97,9 @@ package object json {
         case x: Long => BigDecimal(x)
         case _ => throw new MappingException(s"Expected BigDecimal, but found $x")
       }
+    }
+    implicit val integer = new ReadCodec[Integer] {
+      def read(x: Json): Integer = int.read(x)
     }
 
     def extractSeq[T: ReadCodec](json: Json): Seq[T] =
@@ -175,12 +183,16 @@ package object json {
       def write(x: T):Json = x
     }
     implicit object StringCodec extends SimpleCodec[String]
+    implicit object CharCodec extends WriteCodec[Char] {
+      def write(x: Char): Json = x.toString
+    }
     implicit object IntCodec extends SimpleCodec[Int]
     implicit object BooleanCodec extends SimpleCodec[Boolean]
     implicit object LongCodec extends SimpleCodec[Long]
     implicit object ShortCodec extends SimpleCodec[Short]
     implicit object DoubleCodec extends SimpleCodec[Double]
     implicit object BigDecimalCodec extends SimpleCodec[BigDecimal]
+    implicit object IntegerCodec extends SimpleCodec[Integer]
     implicit def simpleMap[V: WriteCodec] = new WriteCodec[scala.collection.Map[String, V]] {
       def write(obj: scala.collection.Map[String, V]): JsonObject = obj.mapValues(toJson(_)).toMap
     }

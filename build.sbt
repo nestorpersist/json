@@ -1,16 +1,9 @@
-import sbtassembly.Plugin._
-
-import AssemblyKeys._
-
 name := "persist-json"
 
-version := "0.18"
+organization := "com.persist"
+
 
 scalaVersion := "2.11.1"
-
-resolvers += "typesafe0" at "http://repo.typesafe.com/typesafe/releases"
-
-resolvers ++= Seq("snapshots", "releases").map(Resolver.sonatypeRepo)
 
 libraryDependencies ++= Seq(
         "org.scala-lang" % "scala-reflect" % scalaVersion.value,
@@ -20,14 +13,6 @@ libraryDependencies ++= Seq(
         "junit" % "junit" % "4.11" % "test"
 )
 
-crossScalaVersions := Seq("2.11.1")
-
-assemblySettings
-
-test in assembly := {}
-
-jarName in assembly := "persist-json-0.1.jar"
-
 publishTo <<= version { v: String =>
   val nexus = "https://oss.sonatype.org/"
   if (v.trim.endsWith("SNAPSHOT"))
@@ -36,23 +21,17 @@ publishTo <<= version { v: String =>
     Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
 
-organization := "com.persist"
-
 publishMavenStyle := true
 
 publishArtifact in Test := false
 
 pomIncludeRepository := { _ => false }
 
+licenses := Seq("Apache 2" -> url("http://www.apache.org/licenses/LICENSE-2.0.html"))
+
+homepage := Some(url("https://github.com/nestorpersist/json"))
+
 pomExtra := (
-  <url>https://github.com/nestorpersist/json</url>
-  <licenses>
-    <license>
-      <name>Apache 2</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
   <scm>
     <url>git@github.com:nestorpersist/json.git</url>
     <connection>scm:git@github.com:nestorpersist/json.git</connection>
@@ -64,7 +43,11 @@ pomExtra := (
       <email>nestor@persist.com</email>
       <url>http://http://www.persist.com</url>
     </developer>
+    <developer>
+      <id>jedesah</id>
+      <name>Jean-Remi Desjardins</name>
+      <email>jeanremi.desjardins@gmail.com</email>
+      <url>https://github.com/jedesah</url>
+    </developer>
   </developers>
 )
-
-
