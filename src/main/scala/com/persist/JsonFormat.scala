@@ -1,5 +1,9 @@
 package com.persist
 
+import java.nio.ByteBuffer
+
+import sun.misc.{BASE64Decoder, BASE64Encoder}
+
 import scala.util.Try
 
 import JsonOps._
@@ -133,6 +137,14 @@ package object json {
       def read(json: Json): Option[T] = if (json == jnull) None else Some(implicitly[ReadCodec[T]].read(json))
     }
 
+    implicit val byteBuffer = new ReadCodec[ByteBuffer] {
+      def read(json: Json): ByteBuffer = {
+        val string = com.persist.json.read[String](json)
+        val bytes = new BASE64Decoder().decodeBuffer(string)
+        ByteBuffer.wrap(bytes)
+      }
+    }
+
     implicit def readCodecInstance: LabelledProductTypeClass[ReadCodec] = new LabelledProductTypeClass[ReadCodec] {
       def emptyProduct = new ReadCodec[HNil] {
         // This will silently accept extra fields within a JsonObject
@@ -212,6 +224,12 @@ package object json {
     }
     implicit def option[V: WriteCodec] = new WriteCodec[Option[V]] {
       def write(obj: Option[V]): Json = obj.map(toJson(_)).getOrElse(jnull)
+    }
+
+    implicit val byteBuffer = new WriteCodec[ByteBuffer] {
+      def write(obj: ByteBuffer): Json = {
+        new BASE64Encoder().encode(obj.array())
+      }
     }
 
     implicit def writeCodecInstance: LabelledProductTypeClass[WriteCodec] = new LabelledProductTypeClass[WriteCodec] {
