@@ -2,8 +2,6 @@ package com.persist
 
 import java.nio.ByteBuffer
 
-import sun.misc.{BASE64Decoder, BASE64Encoder}
-
 import scala.util.Try
 
 import JsonOps._
