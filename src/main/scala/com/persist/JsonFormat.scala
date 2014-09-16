@@ -140,7 +140,7 @@ package object json {
     implicit val byteBuffer = new ReadCodec[ByteBuffer] {
       def read(json: Json): ByteBuffer = {
         val string = com.persist.json.read[String](json)
-        val bytes = new BASE64Decoder().decodeBuffer(string)
+        val bytes: Array[Byte] = string.map(_.toByte).toArray
         ByteBuffer.wrap(bytes)
       }
     }
@@ -227,9 +227,7 @@ package object json {
     }
 
     implicit val byteBuffer = new WriteCodec[ByteBuffer] {
-      def write(obj: ByteBuffer): Json = {
-        new BASE64Encoder().encode(obj.array())
-      }
+      def write(obj: ByteBuffer): String = obj.array().map(_.toChar).mkString
     }
 
     implicit def writeCodecInstance: LabelledProductTypeClass[WriteCodec] = new LabelledProductTypeClass[WriteCodec] {
