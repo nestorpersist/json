@@ -9,7 +9,7 @@ libraryDependencies ++= Seq(
         "org.scala-lang" % "scala-reflect" % scalaVersion.value,
         "com.chuusai" %% "shapeless" % "2.0.0",
         "org.scalatest" %% "scalatest" % "2.2.1" % "test",
-        "org.specs2" %% "specs2" % "2.4.1" % "test",
+        "org.specs2" %% "specs2" % "2.4.2" % "test",
         "junit" % "junit" % "4.11" % "test"
 )
 
