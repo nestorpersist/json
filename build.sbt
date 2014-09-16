@@ -9,7 +9,7 @@ libraryDependencies ++= Seq(
         "org.scala-lang" % "scala-reflect" % scalaVersion.value,
         "com.chuusai" %% "shapeless" % "2.0.0",
         "org.scalatest" %% "scalatest" % "2.2.1" % "test",
-        "org.specs2" %% "specs2" % "2.4.1" % "test",
+        "org.specs2" %% "specs2" % "2.4.2" % "test",
         "junit" % "junit" % "4.11" % "test"
 )
 
@@ -31,11 +31,9 @@ licenses := Seq("Apache 2" -> url("http://www.apache.org/licenses/LICENSE-2.0.ht
 
 homepage := Some(url("https://github.com/nestorpersist/json"))
 
+scmInfo := Some(ScmInfo(url("https://github.com/nestorpersist/json"), "scm:git@github.com:nestorpersist/json.git"))
+
 pomExtra := (
-  <scm>
-    <url>git@github.com:nestorpersist/json.git</url>
-    <connection>scm:git@github.com:nestorpersist/json.git</connection>
-  </scm>
   <developers>
     <developer>
       <id>johnnestor</id>

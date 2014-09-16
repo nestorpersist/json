@@ -17,6 +17,8 @@
 
 package com.persist
 
+import java.nio.ByteBuffer
+
 import com.persist.json.{ReadWriteCodec, ReadCodec, WriteCodec}
 import org.specs2.mutable._
 import com.persist.JsonOps._
@@ -26,6 +28,7 @@ case class Individual(name: String, age: Option[Int], friend: Option[Ref])
 case class Meetup(city: String, people: Seq[Individual], cnt: Int, props: JsonObject/*, value:BigDecimal*/)
 case class Meetup1(city: String, people: Seq[Individual], cnt: Int, props: Map[String, Any]/*, value:BigDecimal*/)
 case class Meetup2(city: String, people: Seq[Individual], cnt: Int)
+case class ByteTest(buffer: ByteBuffer)
 
 case class FullTrip(s: Short, l: Long)
 
@@ -108,6 +111,15 @@ class JsonFormatTest extends Specification {
       }
       val optionTest = json.read[Option[FullTrip]](JsonObject("s" -> 4, "l" -> 4))
       optionTest ==== Some(FullTrip(1,1))
+    }
+    "byteBuffer" in {
+      implicit val writeCodec = WriteCodec[ByteTest]
+      implicit val readCodec = ReadCodec[ByteTest]
+
+      val obj = ByteTest(ByteBuffer.wrap(Array[Byte](1,2,3,4,5,6)))
+      val jsonThing = json.toJson(obj)
+      val obj1 = json.read[ByteTest](jsonThing)
+      obj ==== obj1
     }
   }
 }
