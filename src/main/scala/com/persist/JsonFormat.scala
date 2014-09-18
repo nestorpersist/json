@@ -40,8 +40,9 @@ package object json {
     }
     implicit val int = new ReadCodec[Int] {
       def read(x: Json): Int = x match {
-        case x: Int => x
+        case x: Byte => x.toInt
         case x: Short => x.toInt
+        case x: Int => x
         case x: Long =>
           if (x <= Int.MaxValue) x.toInt
           else throw new MappingException(s"Expected number that can fit into an Int, but found $x")
@@ -53,6 +54,7 @@ package object json {
     }
     implicit val long = new ReadCodec[Long] {
       def read(x: Json): Long = x match {
+        case x: Byte => x.toLong
         case x: Int => x.toLong
         case x: Short => x.toLong
         case x: Long => x
@@ -62,14 +64,31 @@ package object json {
     implicit val short = new ReadCodec[Short] {
       def precisionException(num: Any) = throw new MappingException(s"Expected number that can fit into a Short, but found $num")
       def read(x: Json): Short = x match {
+        case x: Byte => x.toShort
+        case x: Short => x
         case x: Int =>
            if (x <= Short.MaxValue) x.toShort
            else precisionException(x)
-        case x: Short => x
         case x: Long =>
           if (x <= Short.MaxValue) x.toShort
           else precisionException(x)
         case _ => throw new MappingException(s"Expected: Short, but found $x")
+      }
+    }
+    implicit val byte = new ReadCodec[Byte] {
+      def precisionException(num: Any) = throw new MappingException(s"Expected number that can fit into a Byte, but found $num")
+      def read(x: Json): Byte = x match {
+        case x: Byte => x
+        case x: Int =>
+          if (x <= Byte.MaxValue) x.toByte
+          else precisionException(x)
+        case x: Short =>
+          if (x <= Byte.MaxValue) x.toByte
+          else precisionException(x)
+        case x: Long =>
+          if (x <= Short.MaxValue) x.toByte
+          else precisionException(x)
+        case _ => throw new MappingException(s"Expected: Byte, but found $x")
       }
     }
     implicit val double = new ReadCodec[Double] {
@@ -202,6 +221,7 @@ package object json {
     implicit object BooleanCodec extends SimpleCodec[Boolean]
     implicit object LongCodec extends SimpleCodec[Long]
     implicit object ShortCodec extends SimpleCodec[Short]
+    implicit object ByteCodec extends SimpleCodec[Byte]
     implicit object DoubleCodec extends SimpleCodec[Double]
     implicit object BigDecimalCodec extends SimpleCodec[BigDecimal]
     implicit object IntegerCodec extends SimpleCodec[Integer]
