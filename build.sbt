@@ -2,6 +2,7 @@ name := "persist-json"
 
 organization := "com.persist"
 
+version := "0.20"
 
 scalaVersion := "2.11.1"
 
