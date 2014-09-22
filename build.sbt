@@ -28,7 +28,7 @@ publishArtifact in Test := false
 
 pomIncludeRepository := { _ => false }
 
-licenses := Seq("Apache 2" -> url("http://www.apache.org/licenses/LICENSE-2.0.html"))
+licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.html"))
 
 homepage := Some(url("https://github.com/nestorpersist/json"))
 
