@@ -22,6 +22,8 @@ import java.nio.ByteBuffer
 import com.persist.json.{ReadWriteCodec, ReadCodec, WriteCodec}
 import org.specs2.mutable._
 import com.persist.JsonOps._
+import shapeless._
+import syntax.singleton._
 
 case class Ref(name: String)
 case class Individual(name: String, age: Option[Int], friend: Option[Ref])
@@ -32,15 +34,19 @@ case class ByteTest(buffer: ByteBuffer)
 
 case class FullTrip(s: Short, l: Long)
 
+object Codecs {
+  implicit val ref: ReadCodec[ByteTest] = ReadCodec[ByteTest]
+  implicit val blablabla: ReadCodec[FullTrip] = ReadCodec[FullTrip]
+}
+
 class JsonFormatTest extends Specification {
 
+  import Codecs._
   val individual = Individual("Bill", Some(45), Some(Ref("Bob")))
   val expectedP = JsonObject("name" -> "Bill", "age" -> 45, "friend" -> JsonObject("name" -> "Bob"))
 
   "JsonFormat" should {
     "automatic codec generation" in {
-      import WriteCodec.auto.{derive => writeDerive}
-      import ReadCodec.auto.{derive => readDerive}
       "simple" in {
 
         val p = Individual("Bill", Some(45), Some(Ref("Bob")))
@@ -89,8 +95,8 @@ class JsonFormatTest extends Specification {
         val jsonValue = json.toJson(test)
         val stringValue = Compact(jsonValue)
         val otherJsonValue = Json(stringValue)
-        implicit val ft = ReadCodec[FullTrip]
-        val otherTest = json.read[FullTrip](otherJsonValue)
+
+        val otherTest = blablabla.read(otherJsonValue)//json.read[FullTrip](otherJsonValue)
         test ==== otherTest
       }
       "Integer" in {
@@ -113,8 +119,8 @@ class JsonFormatTest extends Specification {
       optionTest ==== Some(FullTrip(1,1))
     }
     "byteBuffer" in {
-      implicit val writeCodec = WriteCodec[ByteTest]
-      implicit val readCodec = ReadCodec[ByteTest]
+      //implicit val writeCodec1: WriteCodec[ByteTest] = WriteCodec[ByteTest]
+      //
 
       val obj = ByteTest(ByteBuffer.wrap(Array[Byte](1,2,3,4,5,6)))
       val jsonThing = json.toJson(obj)

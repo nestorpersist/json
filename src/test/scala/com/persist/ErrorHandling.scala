@@ -21,6 +21,8 @@ import com.persist.Exceptions.MappingException
 import com.persist.json.ReadCodec
 import org.specs2.mutable._
 import com.persist.JsonOps._
+import shapeless._
+import syntax.singleton._
 
 case class Ref4(name: String)
 case class Individual4(name: String, age: Option[Int], friend: Option[Ref4])
@@ -35,12 +37,13 @@ class ErrorHandlingTest extends Specification {
 
   //import ReadCodec.auto._
 
-  implicit val ref = ReadCodec[Ref4]
-  implicit val ind = ReadCodec[Individual4]
+  implicit val ref: ReadCodec[Ref4] = ReadCodec[Ref4]
+  implicit val ind = LabelledGeneric[Individual4]
 
   "error handling" should {
     "missing field" in {
       "simple" in {
+        import ReadCodec._
         val json_ = JsonObject("name1" -> "Bill", "age" -> 45)
 
         json.read[Individual4](json_) must throwA[MappingException].like { case ex =>

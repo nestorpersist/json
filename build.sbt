@@ -2,16 +2,16 @@ name := "persist-json"
 
 organization := "com.persist"
 
-version := "0.20"
+version := "0.21-SNAPSHOT"
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.5"
 
 libraryDependencies ++= Seq(
         "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-        "com.chuusai" %% "shapeless" % "2.0.0",
-        "org.scalatest" %% "scalatest" % "2.2.1" % "test",
-        "org.specs2" %% "specs2" % "2.4.2" % "test",
-        "junit" % "junit" % "4.11" % "test"
+        "com.chuusai" %% "shapeless" % "2.1.0-RC2",
+        "org.scalatest" %% "scalatest" % "2.2.4" % "test",
+        "org.specs2" %% "specs2-core" % "2.4.16" % "test",
+        "junit" % "junit" % "4.12" % "test"
 )
 
 publishTo <<= version { v: String =>
@@ -22,7 +22,9 @@ publishTo <<= version { v: String =>
     Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
 
-publishMavenStyle := true
+resolvers ++= Seq("snapshots", "releases").map(Resolver.sonatypeRepo)
+
+//publishMavenStyle := true
 
 publishArtifact in Test := false
 
@@ -50,3 +52,7 @@ pomExtra := (
     </developer>
   </developers>
 )
+
+seq(bintraySettings:_*)
+
+bintray.Keys.bintrayOrganization in bintray.Keys.bintray := Some("whitepages")

@@ -2,6 +2,8 @@ package com.persist
 
 import java.nio.ByteBuffer
 
+import shapeless.labelled._
+
 import scala.util.Try
 
 import JsonOps._
@@ -162,7 +164,7 @@ package object json {
       }
     }
 
-    implicit def readCodecInstance: LabelledProductTypeClass[ReadCodec] = new LabelledProductTypeClass[ReadCodec] {
+    val typeClass: LabelledProductTypeClass[ReadCodec] = new LabelledProductTypeClass[ReadCodec] {
       def emptyProduct = new ReadCodec[HNil] {
         // This will silently accept extra fields within a JsonObject
         // To change this behavior make sure json is a JsonObject and that it is empty
@@ -183,23 +185,27 @@ package object json {
         }
       }
 
-        // I wish this could work, then we could support Options in a nice way.
-        // TODO : Fix the compiler :P
-//      def product[A, T <: HList](name: String, FHead: ReadCodec[Option[A]], FTail: ReadCodec[T]) = new ReadCodec[Option[A] :: T] {
-//        def read(json: Json): Option[A] :: T = {
-//          val map = castOrThrow(json)
-//          val head: Option[A] = map.get(name).map { fieldValue =>
-//            Try(FHead.read(fieldValue)).handle{ case MappingException(msg, path) => throw MappingException(msg, s"$name/$path")}.get.get
-//          }
-//          val tail = FTail.read(json)
-//          head :: tail
-//        }
-//      }
-
       def project[F, G](instance: => ReadCodec[G], to : F => G, from : G => F) = new ReadCodec[F] {
         def read(json: Json): F = from(instance.read(json))
       }
     }
+
+    implicit def deriveHConsOption[K <: Symbol, V, T <: HList]
+    (implicit
+     key: Witness.Aux[K],
+     headCodec: Lazy[ReadCodec[V]],
+     tailCodec: Lazy[ReadCodec[T]]
+      ): ReadCodec[FieldType[K, Option[V]] :: T] =
+      new ReadCodec[FieldType[K, Option[V]] :: T] {
+        def read(json: Json): FieldType[K, Option[V]] :: T = {
+          val map = castOrThrow(json)
+          val head: Option[V] = map.get(key.value.name).map { fieldValue =>
+            Try(headCodec.value.read(fieldValue)).recover{ case MappingException(msg, path) => throw MappingException(msg, s"${key.value.name}/$path")}.get
+          }
+          val tail = tailCodec.value.read(json)
+          field[K](head) :: tail
+        }
+      }
   }
 
   @implicitNotFound(msg = "Cannot find WriteCodec for ${T}")
@@ -248,7 +254,7 @@ package object json {
       def write(obj: ByteBuffer): String = obj.array().map(_.toChar).mkString
     }
 
-    implicit def writeCodecInstance: LabelledProductTypeClass[WriteCodec] = new LabelledProductTypeClass[WriteCodec] {
+    val typeClass: LabelledProductTypeClass[WriteCodec] = new LabelledProductTypeClass[WriteCodec] {
       def emptyProduct = new WriteCodec[HNil] {
         def write(t: HNil): JsonObject = Map()
       }
