@@ -176,8 +176,8 @@ package object json {
     implicit def deriveHCons[K <: Symbol, V: TypeTag, T <: HList]
     (implicit
      key: Witness.Aux[K],
-     readCodec: Lazy[ReadCodec[V]],
-     writeCodec: Lazy[ReadCodec[T]]
+     headCodec: Lazy[ReadCodec[V]],
+     tailCodec: Lazy[ReadCodec[T]]
       ): ReadCodec[FieldType[K, V] :: T] = new ReadCodec[FieldType[K, V] :: T] {
         def read(json: Json): FieldType[K, V] :: T = {
           val map = castOrThrow(json)
@@ -190,8 +190,8 @@ package object json {
           // If we get a mapping exception, intercept it and add the name of this field to the path
           // If we get another exception, don't touch!
           // Pitfall: if handle did not accept a PartialFunction, we could transform an unknown exception into a match exception
-          val head: V = Try(readCodec.value.read(fieldValue)).recover{ case MappingException(msg, path) => throw MappingException(msg, s"$name/$path")}.get
-          val tail = writeCodec.value.read(json)
+          val head: V = Try(headCodec.value.read(fieldValue)).recover{ case MappingException(msg, path) => throw MappingException(msg, s"$name/$path")}.get
+          val tail = tailCodec.value.read(json)
           field[K](head) :: tail
         }
       }
