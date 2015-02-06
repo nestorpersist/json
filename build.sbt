@@ -52,7 +52,3 @@ pomExtra := (
     </developer>
   </developers>
 )
-
-seq(bintraySettings:_*)
-
-bintray.Keys.bintrayOrganization in bintray.Keys.bintray := Some("whitepages")
