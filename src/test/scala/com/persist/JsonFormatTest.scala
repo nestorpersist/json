@@ -32,6 +32,10 @@ case class Meetup1(city: String, people: Seq[Individual], cnt: Int, props: Map[S
 case class Meetup2(city: String, people: Seq[Individual], cnt: Int)
 case class ByteTest(buffer: ByteBuffer)
 
+sealed trait Animal
+case class Dog(age: Int, name: String, master: String) extends Animal
+case class Cat(age: Int, name: String, slave: String) extends Animal
+
 case class FullTrip(s: Short, l: Long)
 
 class JsonFormatTest extends Specification {
@@ -115,6 +119,12 @@ class JsonFormatTest extends Specification {
       val expected = JsonObject("name" -> "Ye", "friend" -> JsonObject("name" -> "Yu"))
       json.toJson(individual1) ==== expected
       individual1 ==== json.read[Individual](expected)
+    }
+    "ADT" in {
+      val animal: Animal = Dog(5, "Yoyo", "Ben")
+      val expected = JsonObject("age" -> 5, "name" -> "Yoyo", "master" -> "Ben")
+      json.toJson(animal) ==== expected
+      animal ==== json.read[Animal](expected)
     }
   }
 }

@@ -196,6 +196,22 @@ package object json {
         }
       }
 
+    implicit def deriveCNil: ReadCodec[CNil] = new ReadCodec[CNil] {
+      def read(json: Json): CNil = throw new MappingException("no subclass of sealed trait found that could read this")
+    }
+
+    implicit def deriveCCons[K <: Symbol, V, T <: Coproduct]
+    (implicit
+     key: Witness.Aux[K],
+     codecHead: Lazy[ReadCodec[V]],
+     codecTail: Lazy[ReadCodec[T]]
+      ): ReadCodec[FieldType[K, V] :+: T] =
+      new ReadCodec[FieldType[K, V] :+: T] {
+        def read(json: Json): FieldType[K, V] :+: T = {
+          Try(Inl(field[K](codecHead.value.read(json)))).orElse(Try(Inr(codecTail.value.read(json)))).get
+        }
+      }
+
     implicit def deriveInstance[F, G]
     (implicit gen: LabelledGeneric.Aux[F, G], sg: Lazy[ReadCodec[G]]): ReadCodec[F] = new ReadCodec[F] {
         def read(json: Json): F = gen.from(sg.value.read(json))
@@ -207,7 +223,7 @@ package object json {
     def write(obj: T): Json
   }
 
-  object WriteCodec extends LabelledProductTypeClassCompanion[WriteCodec] {
+  object WriteCodec extends LabelledTypeClassCompanion[WriteCodec] {
     trait SimpleCodec[T] extends WriteCodec[T] {
       def write(x: T):Json = x
     }
@@ -251,7 +267,7 @@ package object json {
       def write(obj: ByteBuffer): String = obj.array().map(_.toChar).mkString
     }
 
-    val typeClass: LabelledProductTypeClass[WriteCodec] = new LabelledProductTypeClass[WriteCodec] {
+    val typeClass: LabelledTypeClass[WriteCodec] = new LabelledTypeClass[WriteCodec] {
       def emptyProduct = new WriteCodec[HNil] {
         def write(t: HNil): JsonObject = Map()
       }
@@ -267,6 +283,15 @@ package object json {
       def project[F, G](instance: => WriteCodec[G], to : F => G, from : G => F) = new WriteCodec[F] {
         def write(f: F) = instance.write(to(f))
       }
+
+      def coproduct[L, R <: Coproduct](name: String, cl: => WriteCodec[L], cr: => WriteCodec[R]) = new WriteCodec[L :+: R] {
+        def write(lr: L :+: R): Json = lr match {
+          case Inl(l) => cl.write(l)
+          case Inr(r) => cr.write(r)
+        }
+      }
+
+      def emptyCoproduct: WriteCodec[CNil] = sys.error("Could not serialize class, this should not have happened")
     }
   }
 
