@@ -34,14 +34,8 @@ case class ByteTest(buffer: ByteBuffer)
 
 case class FullTrip(s: Short, l: Long)
 
-object Codecs {
-  implicit val ref: ReadCodec[ByteTest] = ReadCodec[ByteTest]
-  implicit val blablabla: ReadCodec[FullTrip] = ReadCodec[FullTrip]
-}
-
 class JsonFormatTest extends Specification {
 
-  import Codecs._
   val individual = Individual("Bill", Some(45), Some(Ref("Bob")))
   val expectedP = JsonObject("name" -> "Bill", "age" -> 45, "friend" -> JsonObject("name" -> "Bob"))
 
@@ -64,10 +58,6 @@ class JsonFormatTest extends Specification {
       }
 
       "JsonObject" in {
-        implicit val refCodec = WriteCodec[Ref]
-        implicit val individualCodec = WriteCodec[Individual]
-        implicit val meetupCodec = WriteCodec[Meetup]
-
         val m = Meetup("Montreal", List(individual), 1, JsonObject("name" -> true) /*, 3.6*/)
         val j = json.toJson(m)
         val expected = JsonObject("city" -> "Montreal", "people" -> JsonArray(expectedP), "cnt" -> 1, "props" -> JsonObject("name" -> true) /*, "value" -> 3.6*/)
@@ -75,10 +65,6 @@ class JsonFormatTest extends Specification {
       }
 
       "Map" in {
-        implicit val refCodec = WriteCodec[Ref]
-        implicit val individualCodec = WriteCodec[Individual]
-        implicit val meetupCodec = WriteCodec[Meetup1]
-
         val m = Meetup1("Montreal", List(individual), 1, Map("name" -> true) /*, 3.6*/)
         val j = json.toJson(m)
         val expected = JsonObject("city" -> "Montreal", "people" -> JsonArray(expectedP), "cnt" -> 1, "props" -> Map("name" -> true) /*, "value" -> 3.6*/)
@@ -96,7 +82,7 @@ class JsonFormatTest extends Specification {
         val stringValue = Compact(jsonValue)
         val otherJsonValue = Json(stringValue)
 
-        val otherTest = blablabla.read(otherJsonValue)//json.read[FullTrip](otherJsonValue)
+        val otherTest = json.read[FullTrip](otherJsonValue)
         test ==== otherTest
       }
       "Integer" in {
@@ -115,17 +101,20 @@ class JsonFormatTest extends Specification {
         def read(j: Json): FullTrip = FullTrip(1,1)
         def write(obj: FullTrip): Json = Map()
       }
-      val optionTest = json.read[Option[FullTrip]](JsonObject("s" -> 4, "l" -> 4))
-      optionTest ==== Some(FullTrip(1,1))
+      val optionTest = json.read[FullTrip](JsonObject("s" -> 4, "l" -> 4))
+      optionTest ==== FullTrip(1,1)
     }
     "byteBuffer" in {
-      //implicit val writeCodec1: WriteCodec[ByteTest] = WriteCodec[ByteTest]
-      //
-
       val obj = ByteTest(ByteBuffer.wrap(Array[Byte](1,2,3,4,5,6)))
       val jsonThing = json.toJson(obj)
       val obj1 = json.read[ByteTest](jsonThing)
       obj ==== obj1
+    }
+    "option" in {
+      val individual1 = Individual("Ye", None, Some(Ref("Yu")))
+      val expected = JsonObject("name" -> "Ye", "friend" -> JsonObject("name" -> "Yu"))
+      json.toJson(individual1) ==== expected
+      individual1 ==== json.read[Individual](expected)
     }
   }
 }

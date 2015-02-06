@@ -35,15 +35,9 @@ class ErrorHandlingTest extends Specification {
   val individual = Individual4("Bill", Some(45), Some(Ref4("Bob")))
   val expectedP = JsonObject("name" -> "Bill", "age" -> 45, "friend" -> JsonObject("name" -> "Bob"))
 
-  //import ReadCodec.auto._
-
-  implicit val ref: ReadCodec[Ref4] = ReadCodec[Ref4]
-  implicit val ind = LabelledGeneric[Individual4]
-
   "error handling" should {
     "missing field" in {
       "simple" in {
-        import ReadCodec._
         val json_ = JsonObject("name1" -> "Bill", "age" -> 45)
 
         json.read[Individual4](json_) must throwA[MappingException].like { case ex =>
@@ -61,7 +55,7 @@ class ErrorHandlingTest extends Specification {
         val json_ = JsonObject("name" -> "Bill", "age" -> 45)
 
         json.read[Individual4](json_) ==== Individual4("Bill", Some(45), None)
-      }.pendingUntilFixed("Need to fix the compiler for this :P")
+      }
     }
     "wrong type" in {
       val json_ = JsonObject("name" -> 45, "age" -> 45, "friend" -> JsonObject("name" -> "Bob"))
