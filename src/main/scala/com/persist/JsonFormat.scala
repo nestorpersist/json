@@ -260,7 +260,7 @@ package object json {
         def write(ft: F :: T) = {
           val head = FHead.write(ft.head)
           val tail = FTail.write(ft.tail).asInstanceOf[JsonObject]
-          tail + (name -> head)
+          if (head == jnull) tail else tail + (name -> head)
         }
       }
 
@@ -269,19 +269,6 @@ package object json {
       }
     }
   }
-
-  implicit def deriveHConsOption[K <: Symbol, V, T <: HList]
-  (implicit
-   key: Witness.Aux[K],
-   headCodec: Lazy[WriteCodec[V]],
-   tailCodec: Lazy[WriteCodec[T]]
-    ): WriteCodec[FieldType[K, Option[V]] :: T] =
-    new WriteCodec[FieldType[K, Option[V]] :: T] {
-      def write(ft: FieldType[K, Option[V]] :: T): Json = {
-        val tail = tailCodec.value.write(ft.tail).asInstanceOf[JsonObject]
-        ft.head.map(someHead => tail + (key.value.name -> headCodec.value.write(someHead))).getOrElse(tail)
-      }
-    }
 
   def toJson[T](obj: T)(implicit codec: WriteCodec[T]): Json = codec.write(obj)
   def read[T](json: Json)(implicit codec: ReadCodec[T]): T = codec.read(json)
