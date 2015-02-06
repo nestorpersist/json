@@ -24,7 +24,7 @@ publishTo <<= version { v: String =>
 
 resolvers ++= Seq("snapshots", "releases").map(Resolver.sonatypeRepo)
 
-//publishMavenStyle := true
+publishMavenStyle := true
 
 publishArtifact in Test := false
 
