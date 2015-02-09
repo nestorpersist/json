@@ -24,6 +24,8 @@ import org.specs2.mutable._
 import com.persist.JsonOps._
 import shapeless._
 import syntax.singleton._
+import shapeless.labelled._
+import shapeless.record._
 
 case class Ref(name: String)
 case class Individual(name: String, age: Option[Int], friend: Option[Ref])
@@ -37,6 +39,24 @@ case class Dog(age: Int, name: String, master: String) extends Animal
 case class Cat(age: Int, name: String, slave: String) extends Animal
 
 case class FullTrip(s: Short, l: Long)
+
+class Thing(val foo: Int, val bar: String) {
+  override def equals(other: Any) = other match {
+    case other: Thing => foo == other.foo && bar == other.bar
+    case _ => false
+  }
+}
+
+object Thing {
+  implicit object ThingGeneric extends LabelledGeneric[Thing] {
+    val foow = Witness('foo)
+    val barw = Witness('bar)
+
+    type Repr = FieldType[foow.T,Int] :: FieldType[barw.T, String] :: HNil
+    def to(t : Thing) : Repr = ('foo ->> t.foo) :: ('bar ->> t.bar) :: HNil
+    def from(r : Repr) : Thing = new Thing(r('foo), r('bar))
+  }
+}
 
 class JsonFormatTest extends Specification {
 
@@ -125,6 +145,12 @@ class JsonFormatTest extends Specification {
       val expected = JsonObject("age" -> 5, "name" -> "Yoyo", "master" -> "Ben")
       json.toJson(animal) ==== expected
       animal ==== json.read[Animal](expected)
+    }
+    "non case class with instance for Generic" in {
+      val thing = new Thing(4, "d")
+      val expected = JsonObject("foo" -> 4, "bar" -> "d")
+      json.toJson(thing) ==== expected
+      thing ==== json.read[Thing](expected)
     }
   }
 }
