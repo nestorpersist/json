@@ -264,7 +264,7 @@ package object json {
     }
 
     implicit val byteBuffer = new WriteCodec[ByteBuffer] {
-      def write(obj: ByteBuffer): String = obj.array().map(_.toChar).mkString
+      def write(obj: ByteBuffer): String = obj.array().slice(obj.position(),obj.limit()).map(_.toChar).mkString
     }
 
     val typeClass: LabelledTypeClass[WriteCodec] = new LabelledTypeClass[WriteCodec] {

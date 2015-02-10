@@ -2,7 +2,7 @@ name := "persist-json"
 
 organization := "com.persist"
 
-version := "0.21-SNAPSHOT"
+version := "0.21"
 
 scalaVersion := "2.11.5"
 
@@ -21,8 +21,6 @@ publishTo <<= version { v: String =>
   else
     Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
-
-resolvers ++= Seq("snapshots", "releases").map(Resolver.sonatypeRepo)
 
 publishMavenStyle := true
 
