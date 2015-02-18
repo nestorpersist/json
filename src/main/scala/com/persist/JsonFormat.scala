@@ -28,7 +28,33 @@ package object json {
     def read(json: Json): T
   }
 
-  object ReadCodec {
+  trait LowPriorityReadCodec {
+
+    def castOrThrow(json: Json): JsonObject = json.cast[JsonObject].getOrElse(throw new MappingException(s"Expected JsonObject but found $json"))
+
+    implicit def deriveHCons[K <: Symbol, V, T <: HList]
+    (implicit
+     key: Witness.Aux[K],
+     headCodec: Lazy[ReadCodec[V]],
+     tailCodec: Lazy[ReadCodec[T]]
+      ): ReadCodec[FieldType[K, V] :: T] = new ReadCodec[FieldType[K, V] :: T] {
+      def read(json: Json): FieldType[K, V] :: T = {
+        val map = castOrThrow(json)
+        val name = key.value.name
+        // This is so that we gracefully handle a missing field if it's type is optional
+        val fieldValue = map.getOrElse(name, throw new MappingException(s"""Expected field "${key.value.name}" on JsonObject $map"""))
+        // Try reading the value of the field
+        // If we get a mapping exception, intercept it and add the name of this field to the path
+        // If we get another exception, don't touch!
+        // Pitfall: if handle did not accept a PartialFunction, we could transform an unknown exception into a match exception
+        val head: V = Try(headCodec.value.read(fieldValue)).recover{ case MappingException(msg, path) => throw MappingException(msg, s"$name/$path")}.get
+        val tail = tailCodec.value.read(json)
+        field[K](head) :: tail
+      }
+    }
+  }
+
+  object ReadCodec extends LowPriorityReadCodec {
 
     def apply[T](implicit st: Lazy[ReadCodec[T]]): ReadCodec[T] = st.value
 
@@ -142,8 +168,6 @@ package object json {
       def read(json: Json): List[T] = extractSeq[T](json).toList
     }
 
-    def castOrThrow(json: Json): JsonObject = json.cast[JsonObject].getOrElse(throw new MappingException(s"Expected JsonObject but found $json"))
-
     implicit def simpleMap[V: ReadCodec] = new ReadCodec[Map[String, V]] {
       def read(json: Json): Map[String, V] = castOrThrow(json).mapValues(implicitly[ReadCodec[V]].read(_))
     }
@@ -173,24 +197,22 @@ package object json {
         def read(json: Json) = HNil
       }
 
-    implicit def deriveHCons[K <: Symbol, V: TypeTag, T <: HList]
+    implicit def deriveHConsWithOption[K <: Symbol, V, T <: HList]
     (implicit
      key: Witness.Aux[K],
      headCodec: Lazy[ReadCodec[V]],
      tailCodec: Lazy[ReadCodec[T]]
-      ): ReadCodec[FieldType[K, V] :: T] = new ReadCodec[FieldType[K, V] :: T] {
-        def read(json: Json): FieldType[K, V] :: T = {
+      ): ReadCodec[FieldType[K, Option[V]] :: T] = new ReadCodec[FieldType[K, Option[V]] :: T] {
+        def read(json: Json): FieldType[K, Option[V]] :: T = {
           val map = castOrThrow(json)
           val name = key.value.name
           // This is so that we gracefully handle a missing field if it's type is optional
-          val fieldValue = map.getOrElse(name,
-            if (implicitly[TypeTag[V]].tpe <:< typeOf[Option[Any]]) jnull else throw new MappingException(s"Expected field ${key.value.name} on JsonObject $map")
-          )
+          val fieldValue = map.get(name)
           // Try reading the value of the field
           // If we get a mapping exception, intercept it and add the name of this field to the path
           // If we get another exception, don't touch!
           // Pitfall: if handle did not accept a PartialFunction, we could transform an unknown exception into a match exception
-          val head: V = Try(headCodec.value.read(fieldValue)).recover{ case MappingException(msg, path) => throw MappingException(msg, s"$name/$path")}.get
+          val head: Option[V] = fieldValue.map(field => Try{headCodec.value.read(field)}.recover{ case MappingException(msg, path) => throw MappingException(msg, s"$name/$path")}.get)
           val tail = tailCodec.value.read(json)
           field[K](head) :: tail
         }

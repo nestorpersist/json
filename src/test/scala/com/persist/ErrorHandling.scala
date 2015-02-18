@@ -41,14 +41,14 @@ class ErrorHandlingTest extends Specification {
         val json_ = JsonObject("name1" -> "Bill", "age" -> 45)
 
         json.read[Individual4](json_) must throwA[MappingException].like { case ex =>
-          ex ==== MappingException(s"Expected field name on JsonObject $json_", "")
+          ex ==== MappingException(s"""Expected field "name" on JsonObject $json_""", "")
         }
       }
       "nested" in {
         val json_ = JsonObject("name" -> "Bill", "age" -> 45, "friend" -> JsonObject("name1" -> "Bob"))
 
         json.read[Individual4](json_) must throwA[MappingException].like { case ex =>
-          ex ==== MappingException(s"""Expected field name on JsonObject Map(name1 -> Bob)""", "friend/")
+          ex ==== MappingException(s"""Expected field "name" on JsonObject Map(name1 -> Bob)""", "friend/")
         }
       }
       "optional" in {
