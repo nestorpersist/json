@@ -30,7 +30,7 @@ case class Meetup1(city: String, people: Seq[Individual], cnt: Int, props: Map[S
 case class Meetup2(city: String, people: Seq[Individual], cnt: Int)
 case class ByteTest(buffer: ByteBuffer)
 
-case class FullTrip(s: Short, l: Long)
+case class FullTrip(s: Short, l: Long, d: Double)
 
 class JsonFormatTest extends Specification {
 
@@ -85,7 +85,7 @@ class JsonFormatTest extends Specification {
       //      j ==== expected
       //    }
       "full trip" in {
-        val test = FullTrip(4, 4)
+        val test = FullTrip(4, 4, 1.1)
         val jsonValue = json.toJson(test)
         val stringValue = Compact(jsonValue)
         val otherJsonValue = Json(stringValue)
@@ -106,11 +106,11 @@ class JsonFormatTest extends Specification {
     }
     "read and readWrite" in {
       implicit val codec = new ReadWriteCodec[FullTrip] {
-        def read(j: Json): FullTrip = FullTrip(1,1)
+        def read(j: Json): FullTrip = FullTrip(1,1,1.1)
         def write(obj: FullTrip): Json = Map()
       }
-      val optionTest = json.read[Option[FullTrip]](JsonObject("s" -> 4, "l" -> 4))
-      optionTest ==== Some(FullTrip(1,1))
+      val optionTest = json.read[Option[FullTrip]](JsonObject("s" -> 4, "l" -> 4, "d" -> 1.1))
+      optionTest ==== Some(FullTrip(1,1,1.1))
     }
     "byteBuffer" in {
       implicit val writeCodec = WriteCodec[ByteTest]
