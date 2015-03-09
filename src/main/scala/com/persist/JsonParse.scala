@@ -541,11 +541,13 @@ private[persist] object JsonUnparse {
         case x: Int => sb.append(x.toString)
         case x: Long => sb.append(x.toString)
         case x: BigDecimal => sb.append(x.toString)
+        case x: Double =>
+          sb.append("%1$e".format(x))   // g->e
+        case x: Float =>
+          sb.append("%1$e".format(x))   // g->e
         case x: Number => sb.append(x.toString)
         case null => sb.append("null")
         case x: Boolean => sb.append(x.toString)
-        case x: Double =>
-          sb.append("%1$g".format(x))
         case list: Seq[_] => {
           if (list.isEmpty) {
             sb.append("[]")
@@ -640,7 +642,8 @@ private[persist] object JsonUnparse {
     obj match {
       case null => doIndent("null", indent)
       case x: Boolean => doIndent(x.toString, indent)
-      case x: Double => doIndent("%1$g".format(x), indent)
+      case x: Double => doIndent("%1$e".format(x), indent)  // g=>e
+      case x: Float => doIndent("%1$e".format(x), indent)  // g=>e
       case x: Number => doIndent(x.toString, indent)
       case array: Array[Json] => pretty(array.toList, indent, width, count, safe)
       case list: Seq[_] =>

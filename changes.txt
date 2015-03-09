@@ -1,3 +1,5 @@
+3/9/2015
+   Double Pretty and Compact now always use E notation.
 8/26/2014
    Added safe option to Compact and Pretty.
    Adjusted decimal versus exp floating pt string reps.
