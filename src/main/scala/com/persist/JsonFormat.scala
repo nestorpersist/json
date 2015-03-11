@@ -92,8 +92,10 @@ package object json {
     implicit val double = new ReadCodec[Double] {
       def read(x: Json): Double = x match {
         case x: Int => x.toDouble
+        case x: Float => x.toDouble
         case x: Short => x.toDouble
         case x: Long => x.toDouble
+        case x: BigDecimal => x.toDouble
         case x: Double => x
         case _ => throw new MappingException(s"Expected: Double, but found $x")
       }
@@ -105,6 +107,7 @@ package object json {
         case x: Int => x.toFloat
         case x: Short => x.toFloat
         case x: Long => x.toFloat
+        case x: BigDecimal => x.toFloat
         case _ => throw new MappingException(s"Expected Float, but found $x")
       }
     }
