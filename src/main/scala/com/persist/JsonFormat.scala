@@ -2,14 +2,15 @@ package com.persist
 
 import java.nio.ByteBuffer
 
-import scala.util.Try
-
-import JsonOps._
 import com.persist.Exceptions.MappingException
-import scala.annotation.implicitNotFound
-
+import com.persist.JsonOps._
 import shapeless._
-import syntax.typeable._
+import shapeless.labelled._
+import shapeless.syntax.typeable._
+
+import scala.annotation.implicitNotFound
+import scala.reflect.runtime.universe.{TypeTag, typeOf}
+import scala.util.Try
 
 package object json {
 
@@ -23,11 +24,40 @@ package object json {
   }
 
   @implicitNotFound(msg = "Cannot find ReadCodec for ${T}")
-  trait ReadCodec[+T] {
+  trait ReadCodec[T] {
     def read(json: Json): T
   }
 
-  object ReadCodec extends LabelledProductTypeClassCompanion[ReadCodec] {
+  trait LowPriorityReadCodec {
+
+    def castOrThrow(json: Json): JsonObject = json.cast[JsonObject].getOrElse(throw new MappingException(s"Expected JsonObject but found $json"))
+
+    implicit def deriveHCons[K <: Symbol, V, T <: HList]
+    (implicit
+     key: Witness.Aux[K],
+     headCodec: Lazy[ReadCodec[V]],
+     tailCodec: Lazy[ReadCodec[T]]
+      ): ReadCodec[FieldType[K, V] :: T] = new ReadCodec[FieldType[K, V] :: T] {
+      def read(json: Json): FieldType[K, V] :: T = {
+        val map = castOrThrow(json)
+        val name = key.value.name
+        // This is so that we gracefully handle a missing field if it's type is optional
+        val fieldValue = map.getOrElse(name, throw new MappingException(s"""Expected field "${key.value.name}" on JsonObject $map"""))
+        // Try reading the value of the field
+        // If we get a mapping exception, intercept it and add the name of this field to the path
+        // If we get another exception, don't touch!
+        // Pitfall: if handle did not accept a PartialFunction, we could transform an unknown exception into a match exception
+        val head: V = Try(headCodec.value.read(fieldValue)).recover{ case MappingException(msg, path) => throw MappingException(msg, s"$name/$path")}.get
+        val tail = tailCodec.value.read(json)
+        field[K](head) :: tail
+      }
+    }
+  }
+
+  object ReadCodec extends LowPriorityReadCodec {
+
+    def apply[T](implicit st: Lazy[ReadCodec[T]]): ReadCodec[T] = st.value
+
     implicit val string = new ReadCodec[String] {
       def read(x: Json): String = x.cast[String].getOrElse(throw new MappingException(s"Expected: String but found $x"))
     }
@@ -138,8 +168,6 @@ package object json {
       def read(json: Json): List[T] = extractSeq[T](json).toList
     }
 
-    def castOrThrow(json: Json): JsonObject = json.cast[JsonObject].getOrElse(throw new MappingException(s"Expected JsonObject but found $json"))
-
     implicit def simpleMap[V: ReadCodec] = new ReadCodec[Map[String, V]] {
       def read(json: Json): Map[String, V] = castOrThrow(json).mapValues(implicitly[ReadCodec[V]].read(_))
     }
@@ -162,52 +190,62 @@ package object json {
       }
     }
 
-    implicit def readCodecInstance: LabelledProductTypeClass[ReadCodec] = new LabelledProductTypeClass[ReadCodec] {
-      def emptyProduct = new ReadCodec[HNil] {
+    implicit def deriveHNil: ReadCodec[HNil] =
+      new ReadCodec[HNil] {
         // This will silently accept extra fields within a JsonObject
         // To change this behavior make sure json is a JsonObject and that it is empty
         def read(json: Json) = HNil
       }
 
-      def product[F, T <: HList](name: String, FHead: ReadCodec[F], FTail: ReadCodec[T]) = new ReadCodec[F :: T] {
-        def read(json: Json): F :: T = {
+    implicit def deriveHConsWithOption[K <: Symbol, V, T <: HList]
+    (implicit
+     key: Witness.Aux[K],
+     headCodec: Lazy[ReadCodec[V]],
+     tailCodec: Lazy[ReadCodec[T]]
+      ): ReadCodec[FieldType[K, Option[V]] :: T] = new ReadCodec[FieldType[K, Option[V]] :: T] {
+        def read(json: Json): FieldType[K, Option[V]] :: T = {
           val map = castOrThrow(json)
-          val fieldValue = map.getOrElse(name, throw new MappingException(s"Expected field $name on JsonObject $map"))
+          val name = key.value.name
+          // This is so that we gracefully handle a missing field if it's type is optional
+          val fieldValue = map.get(name)
           // Try reading the value of the field
           // If we get a mapping exception, intercept it and add the name of this field to the path
           // If we get another exception, don't touch!
-          // Pitfall: if handle did not accept a PartialFunction, we could transform an unknow exception into a match exception
-          val head: F = Try(FHead.read(fieldValue)).recover{ case MappingException(msg, path) => throw MappingException(msg, s"$name/$path")}.get
-          val tail = FTail.read(json)
-          head :: tail
+          // Pitfall: if handle did not accept a PartialFunction, we could transform an unknown exception into a match exception
+          val head: Option[V] = fieldValue.map(field => Try{headCodec.value.read(field)}.recover{ case MappingException(msg, path) => throw MappingException(msg, s"$name/$path")}.get)
+          val tail = tailCodec.value.read(json)
+          field[K](head) :: tail
         }
       }
 
-        // I wish this could work, then we could support Options in a nice way.
-        // TODO : Fix the compiler :P
-//      def product[A, T <: HList](name: String, FHead: ReadCodec[Option[A]], FTail: ReadCodec[T]) = new ReadCodec[Option[A] :: T] {
-//        def read(json: Json): Option[A] :: T = {
-//          val map = castOrThrow(json)
-//          val head: Option[A] = map.get(name).map { fieldValue =>
-//            Try(FHead.read(fieldValue)).handle{ case MappingException(msg, path) => throw MappingException(msg, s"$name/$path")}.get.get
-//          }
-//          val tail = FTail.read(json)
-//          head :: tail
-//        }
-//      }
-
-      def project[F, G](instance: => ReadCodec[G], to : F => G, from : G => F) = new ReadCodec[F] {
-        def read(json: Json): F = from(instance.read(json))
-      }
+    implicit def deriveCNil: ReadCodec[CNil] = new ReadCodec[CNil] {
+      def read(json: Json): CNil = throw new MappingException("no subclass of sealed trait found that could read this")
     }
+
+    implicit def deriveCCons[K <: Symbol, V, T <: Coproduct]
+    (implicit
+     key: Witness.Aux[K],
+     codecHead: Lazy[ReadCodec[V]],
+     codecTail: Lazy[ReadCodec[T]]
+      ): ReadCodec[FieldType[K, V] :+: T] =
+      new ReadCodec[FieldType[K, V] :+: T] {
+        def read(json: Json): FieldType[K, V] :+: T = {
+          Try(Inl(field[K](codecHead.value.read(json)))).orElse(Try(Inr(codecTail.value.read(json)))).get
+        }
+      }
+
+    implicit def deriveInstance[F, G]
+    (implicit gen: LabelledGeneric.Aux[F, G], sg: Lazy[ReadCodec[G]]): ReadCodec[F] = new ReadCodec[F] {
+        def read(json: Json): F = gen.from(sg.value.read(json))
+      }
   }
 
   @implicitNotFound(msg = "Cannot find WriteCodec for ${T}")
-  trait WriteCodec[-T] {
+  trait WriteCodec[T] {
     def write(obj: T): Json
   }
 
-  object WriteCodec extends LabelledProductTypeClassCompanion[WriteCodec] {
+  object WriteCodec extends LabelledTypeClassCompanion[WriteCodec] {
     trait SimpleCodec[T] extends WriteCodec[T] {
       def write(x: T):Json = x
     }
@@ -240,6 +278,9 @@ package object json {
     implicit def iterable[V: WriteCodec] = new WriteCodec[Iterable[V]] {
       def write(obj: Iterable[V]): JsonArray = obj.map(toJson(_)).toSeq
     }
+    implicit def seq[V: WriteCodec] = new WriteCodec[Seq[V]] {
+      def write(obj: Seq[V]): JsonArray = obj.map(toJson(_))
+    }
     implicit def option[V: WriteCodec] = new WriteCodec[Option[V]] {
       def write(obj: Option[V]): Json = obj.map(toJson(_)).getOrElse(jnull)
     }
@@ -248,7 +289,7 @@ package object json {
       def write(obj: ByteBuffer): String = obj.array().slice(obj.position(),obj.limit()).map(_.toChar).mkString
     }
 
-    implicit def writeCodecInstance: LabelledProductTypeClass[WriteCodec] = new LabelledProductTypeClass[WriteCodec] {
+    val typeClass: LabelledTypeClass[WriteCodec] = new LabelledTypeClass[WriteCodec] {
       def emptyProduct = new WriteCodec[HNil] {
         def write(t: HNil): JsonObject = Map()
       }
@@ -257,13 +298,22 @@ package object json {
         def write(ft: F :: T) = {
           val head = FHead.write(ft.head)
           val tail = FTail.write(ft.tail).asInstanceOf[JsonObject]
-          tail + (name -> head)
+          if (head == jnull) tail else tail + (name -> head)
         }
       }
 
       def project[F, G](instance: => WriteCodec[G], to : F => G, from : G => F) = new WriteCodec[F] {
         def write(f: F) = instance.write(to(f))
       }
+
+      def coproduct[L, R <: Coproduct](name: String, cl: => WriteCodec[L], cr: => WriteCodec[R]) = new WriteCodec[L :+: R] {
+        def write(lr: L :+: R): Json = lr match {
+          case Inl(l) => cl.write(l)
+          case Inr(r) => cr.write(r)
+        }
+      }
+
+      def emptyCoproduct: WriteCodec[CNil] = sys.error("Could not serialize class, this should not have happened")
     }
   }
 

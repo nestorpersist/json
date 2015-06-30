@@ -21,6 +21,8 @@ import com.persist.Exceptions.MappingException
 import com.persist.json.ReadCodec
 import org.specs2.mutable._
 import com.persist.JsonOps._
+import shapeless._
+import syntax.singleton._
 
 case class Ref4(name: String)
 case class Individual4(name: String, age: Option[Int], friend: Option[Ref4])
@@ -33,32 +35,27 @@ class ErrorHandlingTest extends Specification {
   val individual = Individual4("Bill", Some(45), Some(Ref4("Bob")))
   val expectedP = JsonObject("name" -> "Bill", "age" -> 45, "friend" -> JsonObject("name" -> "Bob"))
 
-  //import ReadCodec.auto._
-
-  implicit val ref = ReadCodec[Ref4]
-  implicit val ind = ReadCodec[Individual4]
-
   "error handling" should {
     "missing field" in {
       "simple" in {
         val json_ = JsonObject("name1" -> "Bill", "age" -> 45)
 
         json.read[Individual4](json_) must throwA[MappingException].like { case ex =>
-          ex ==== MappingException(s"Expected field name on JsonObject $json_", "")
+          ex ==== MappingException(s"""Expected field "name" on JsonObject $json_""", "")
         }
       }
       "nested" in {
         val json_ = JsonObject("name" -> "Bill", "age" -> 45, "friend" -> JsonObject("name1" -> "Bob"))
 
         json.read[Individual4](json_) must throwA[MappingException].like { case ex =>
-          ex ==== MappingException(s"""Expected field name on JsonObject Map(name1 -> Bob)""", "friend/")
+          ex ==== MappingException(s"""Expected field "name" on JsonObject Map(name1 -> Bob)""", "friend/")
         }
       }
       "optional" in {
         val json_ = JsonObject("name" -> "Bill", "age" -> 45)
 
         json.read[Individual4](json_) ==== Individual4("Bill", Some(45), None)
-      }.pendingUntilFixed("Need to fix the compiler for this :P")
+      }
     }
     "wrong type" in {
       val json_ = JsonObject("name" -> 45, "age" -> 45, "friend" -> JsonObject("name" -> "Bob"))

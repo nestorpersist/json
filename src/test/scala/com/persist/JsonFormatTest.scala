@@ -22,6 +22,10 @@ import java.nio.ByteBuffer
 import com.persist.json.{ReadWriteCodec, ReadCodec, WriteCodec}
 import org.specs2.mutable._
 import com.persist.JsonOps._
+import shapeless._
+import syntax.singleton._
+import shapeless.labelled._
+import shapeless.record._
 
 case class Ref(name: String)
 case class Individual(name: String, age: Option[Int], friend: Option[Ref])
@@ -30,7 +34,29 @@ case class Meetup1(city: String, people: Seq[Individual], cnt: Int, props: Map[S
 case class Meetup2(city: String, people: Seq[Individual], cnt: Int)
 case class ByteTest(buffer: ByteBuffer)
 
+sealed trait Animal
+case class Dog(age: Int, name: String, master: String) extends Animal
+case class Cat(age: Int, name: String, slave: String) extends Animal
+
 case class FullTrip(s: Short, l: Long)
+
+class Thing(val foo: Int, val bar: String) {
+  override def equals(other: Any) = other match {
+    case other: Thing => foo == other.foo && bar == other.bar
+    case _ => false
+  }
+}
+
+object Thing {
+  implicit object ThingGeneric extends LabelledGeneric[Thing] {
+    val foow = Witness('foo)
+    val barw = Witness('bar)
+
+    type Repr = FieldType[foow.T,Int] :: FieldType[barw.T, String] :: HNil
+    def to(t : Thing) : Repr = ('foo ->> t.foo) :: ('bar ->> t.bar) :: HNil
+    def from(r : Repr) : Thing = new Thing(r('foo), r('bar))
+  }
+}
 
 class JsonFormatTest extends Specification {
 
@@ -39,8 +65,6 @@ class JsonFormatTest extends Specification {
 
   "JsonFormat" should {
     "automatic codec generation" in {
-      import WriteCodec.auto.{derive => writeDerive}
-      import ReadCodec.auto.{derive => readDerive}
       "simple" in {
 
         val p = Individual("Bill", Some(45), Some(Ref("Bob")))
@@ -58,10 +82,6 @@ class JsonFormatTest extends Specification {
       }
 
       "JsonObject" in {
-        implicit val refCodec = WriteCodec[Ref]
-        implicit val individualCodec = WriteCodec[Individual]
-        implicit val meetupCodec = WriteCodec[Meetup]
-
         val m = Meetup("Montreal", List(individual), 1, JsonObject("name" -> true) /*, 3.6*/)
         val j = json.toJson(m)
         val expected = JsonObject("city" -> "Montreal", "people" -> JsonArray(expectedP), "cnt" -> 1, "props" -> JsonObject("name" -> true) /*, "value" -> 3.6*/)
@@ -69,10 +89,6 @@ class JsonFormatTest extends Specification {
       }
 
       "Map" in {
-        implicit val refCodec = WriteCodec[Ref]
-        implicit val individualCodec = WriteCodec[Individual]
-        implicit val meetupCodec = WriteCodec[Meetup1]
-
         val m = Meetup1("Montreal", List(individual), 1, Map("name" -> true) /*, 3.6*/)
         val j = json.toJson(m)
         val expected = JsonObject("city" -> "Montreal", "people" -> JsonArray(expectedP), "cnt" -> 1, "props" -> Map("name" -> true) /*, "value" -> 3.6*/)
@@ -89,7 +105,7 @@ class JsonFormatTest extends Specification {
         val jsonValue = json.toJson(test)
         val stringValue = Compact(jsonValue)
         val otherJsonValue = Json(stringValue)
-        implicit val ft = ReadCodec[FullTrip]
+
         val otherTest = json.read[FullTrip](otherJsonValue)
         test ==== otherTest
       }
@@ -109,17 +125,32 @@ class JsonFormatTest extends Specification {
         def read(j: Json): FullTrip = FullTrip(1,1)
         def write(obj: FullTrip): Json = Map()
       }
-      val optionTest = json.read[Option[FullTrip]](JsonObject("s" -> 4, "l" -> 4))
-      optionTest ==== Some(FullTrip(1,1))
+      val optionTest = json.read[FullTrip](JsonObject("s" -> 4, "l" -> 4))
+      optionTest ==== FullTrip(1,1)
     }
     "byteBuffer" in {
-      implicit val writeCodec = WriteCodec[ByteTest]
-      implicit val readCodec = ReadCodec[ByteTest]
-
       val obj = ByteTest(ByteBuffer.wrap(Array[Byte](1,2,3,4,5,6)))
       val jsonThing = json.toJson(obj)
       val obj1 = json.read[ByteTest](jsonThing)
       obj ==== obj1
+    }
+    "option" in {
+      val individual1 = Individual("Ye", None, Some(Ref("Yu")))
+      val expected = JsonObject("name" -> "Ye", "friend" -> JsonObject("name" -> "Yu"))
+      json.toJson(individual1) ==== expected
+      individual1 ==== json.read[Individual](expected)
+    }
+    "ADT" in {
+      val animal: Animal = Dog(5, "Yoyo", "Ben")
+      val expected = JsonObject("age" -> 5, "name" -> "Yoyo", "master" -> "Ben")
+      json.toJson(animal) ==== expected
+      animal ==== json.read[Animal](expected)
+    }
+    "non case class with instance for Generic" in {
+      val thing = new Thing(4, "d")
+      val expected = JsonObject("foo" -> 4, "bar" -> "d")
+      json.toJson(thing) ==== expected
+      thing ==== json.read[Thing](expected)
     }
   }
 }
