@@ -1,6 +1,6 @@
 /*
  *  Copyright 2012-2015 Persist Software
- *  
+ *
  *   http://www.persist.com
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,13 +21,22 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FunSuite
 import com.persist.JsonOps._
-import com.persist.JsonMapper._
+//import com.persist.JsonMapper._
+import java.nio.ByteBuffer
+import com.persist.json.{ReadWriteCodec, ReadCodec, WriteCodec}
 
-case class Person1(name: String, age: Option[Int], friend: Option[Person])
-case class Group1(city: String, people: Seq[Person1], var cnt: Int, props: JsonObject, value:BigDecimal)
+case class Person1(name: String, age: Option[Int])
+case class Person(name: String, age: Option[Int], friend: Option[Person])
+case class Group(city: String, people: Seq[Person], var cnt: Int, props: JsonObject, value:BigDecimal)
+
 
 @RunWith(classOf[JUnitRunner])
-class MapperTest extends FunSuite {
+class PersonTest extends FunSuite {
+  implicit val rr = ReadCodec[Person1]
+  implicit val pr = ReadCodec[Person]
+  implicit val pw = WriteCodec[Person]
+  implicit val gr = ReadCodec[Group]
+  implicit val gw = WriteCodec[Group]
 
   test("mapper") {
 
@@ -39,8 +48,8 @@ class MapperTest extends FunSuite {
 
     //val mv = ToObject[Map[String,Json]](Map("a"->3,"b"->"foo"))
     //val iv = ToObject[Integer](17)
-    val group: Group1 = ToObject[Group1](j)
-    val j1: Json = ToJson(group)
+    val group: Group = json.read[Group](j)
+    val j1: Json = json.toJson(group)
 
     assert(j1 === j, "mapper fail")
   }

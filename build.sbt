@@ -2,16 +2,16 @@ name := "persist-json"
 
 organization := "com.persist"
 
-version := "0.22"
+version := "0.0.23"
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.7"
 
 libraryDependencies ++= Seq(
         "org.scala-lang" % "scala-reflect" % scalaVersion.value,
         "com.chuusai" %% "shapeless" % "2.0.0",
-        "org.scalatest" %% "scalatest" % "2.2.1" % "test",
-        "org.specs2" %% "specs2" % "2.4.2" % "test",
-        "junit" % "junit" % "4.11" % "test"
+        "org.scalatest" %% "scalatest" % "2.2.4" % "test",
+        "org.specs2" %% "specs2-core" % "3.6.2" % "test",
+        "junit" % "junit" % "4.12" % "test"
 )
 
 publishTo <<= version { v: String =>
