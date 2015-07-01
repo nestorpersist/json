@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>persist - com.persist</title>
@@ -29,9 +28,13 @@
         </head>
         <body class="value">
       <div id="definition">
-        <img src="../../lib/package_big.png" />
+        <img alt="Package" src="../../lib/package_big.png" />
         <p id="owner"><a href="../package.html" class="extype" name="com">com</a></p>
-        <h1>persist</h1>
+        <h1>persist</h1><span class="permalink">
+      <a href="../../index.html#com.persist.package" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -78,9 +81,13 @@
       <span class="symbol">
         <a href="Exceptions$.html"><span class="name">Exceptions</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">This object defines the Exceptions used within Persist-Json.</p>
-    </li><li name="com.persist.JsonMapper" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      </h4><span class="permalink">
+      <a href="../../index.html#com.persist.package@Exceptions" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This object defines the Exceptions used within Persist-Json.</p>
+    </li><li name="com.persist.JsonMapper" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="JsonMapper"></a>
       <a id="JsonMapper:JsonMapper"></a>
       <h4 class="signature">
@@ -91,10 +98,32 @@
       <span class="symbol">
         <a href="JsonMapper$.html"><span class="name">JsonMapper</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">This object has methods that use reflection for converting between
-Json and user defined case classes.</p>
-    </li><li name="com.persist.JsonOps" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      </h4><span class="permalink">
+      <a href="../../index.html#com.persist.package@JsonMapper" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This object has methods that use a collection of codecs for converting between
+Json and user defined case classes.</p><div class="fullcomment"><div class="comment cmt"><p>This object has methods that use a collection of codecs for converting between
+Json and user defined case classes. For case classes, Shapeless is used.
+Here is an example:</p><pre><span class="kw">import</span> com.persist.JsonOps._
+<span class="kw">import</span> com.persist.JsonMapper._
+<span class="kw">import</span> com.persist.json._   <span class="cmt">// brings in implicit codecs!</span>
+
+<span class="kw">case</span> <span class="kw">class</span> Person(name:<span class="std">String</span>, age:<span class="std">Option</span>[<span class="std">Int</span>])
+<span class="kw">case</span> <span class="kw">class</span> Group(city: <span class="std">String</span>, people:<span class="std">Seq</span>[Person], <span class="kw">var</span> cnt:<span class="std">Int</span>, props:JsonObject)
+
+<span class="kw">val</span> j:Json = Json(<span class="lit">""</span><span class="lit">"{city:"</span>Seattle<span class="lit">", cnt:2, props:{i:1, j:2},
+                      people:[{name:"</span>Joe<span class="lit">"},
+                              {name:"</span>Tom<span class="lit">", age:20}]
+                     }"</span><span class="lit">""</span>)
+
+<span class="kw">val</span> group:Group = ToObject[Group](j)
+
+<span class="kw">val</span> j1:Json = ToJson(group)
+
+assert(j1 == j)</pre></div></div>
+    </li><li name="com.persist.JsonOps" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="JsonOps"></a>
       <a id="JsonOps:JsonOps"></a>
       <h4 class="signature">
@@ -105,8 +134,46 @@ Json and user defined case classes.</p>
       <span class="symbol">
         <a href="JsonOps$.html"><span class="name">JsonOps</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">Provides types and functions for working with Json types.</p>
+      </h4><span class="permalink">
+      <a href="../../index.html#com.persist.package@JsonOps" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Provides types and functions for working with Json types.</p><div class="fullcomment"><div class="comment cmt"><p>Provides types and functions for working with Json types.</p><p>Json is represented by immutable Scala types.
+Instead of having separate Json types, type aliases are
+defined for Json forms.</p><p>Scala types used for Json are</p><p>- Json Object. Immutable Map[String,Json]. Note that keys are not ordered. When converting to a string with Compact or Pretty keys are sorted.
+- Json Array. Immutable Seq[Json]
+- Json String. String
+- Json Boolean. Boolean
+- Json Number. Int, Long, BigDecimal (with .), Double (with e)
+- Json Null. Null</p><p>Any of the Json types can be at the top level
+of a document (not just array and object).</p><p>The Json parser supports some extensions that are useful for human edited
+Json input (such as configurations).</p><p>- Comments. The characters // to end of line are discarded during parsing.
+- Scala-like raw strings. Start with &quot;&quot;{ and end with }&quot;&quot;. Treated as normal strings after parsing.
+- No quotes on simple names. If an object component name starts with a letter and contains
+only letters and digits the &quot; quotes are not required. After parsing names with and without
+quotes are not distinguished.</p></div></div>
+    </li><li name="com.persist.json" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="json"></a>
+      <a id="json:json"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="json/package.html"><span class="name">json</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../index.html#com.persist.package@json" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This package contains the codec operations used to
+implement ToJson and ToObject.</p><div class="fullcomment"><div class="comment cmt"><p>This package contains the codec operations used to
+implement ToJson and ToObject.
+These operations are normally not called directly.
+</p></div></div>
     </li></ol>
             </div>
 

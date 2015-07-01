@@ -1,9 +1,9 @@
 <!DOCTYPE html >
 <html>
         <head>
-          <title>SystemException - com.persist.Exceptions.SystemException</title>
-          <meta name="description" content="SystemException - com.persist.Exceptions.SystemException" />
-          <meta name="keywords" content="SystemException com.persist.Exceptions.SystemException" />
+          <title>MappingException - com.persist.Exceptions.MappingException</title>
+          <meta name="description" content="MappingException - com.persist.Exceptions.MappingException" />
+          <meta name="keywords" content="MappingException com.persist.Exceptions.MappingException" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -16,7 +16,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../index.html';
-            var hash = 'com.persist.Exceptions$$SystemException';
+            var hash = 'com.persist.Exceptions$$MappingException';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -30,10 +30,10 @@
       <div id="definition">
         <img alt="Class" src="../../lib/class_big.png" />
         <p id="owner"><a href="../package.html" class="extype" name="com">com</a>.<a href="package.html" class="extype" name="com.persist">persist</a>.<a href="Exceptions$.html" class="extype" name="com.persist.Exceptions">Exceptions</a></p>
-        <h1>SystemException</h1><h3><span class="morelinks"><div>Related Doc:
+        <h1>MappingException</h1><h3><span class="morelinks"><div>Related Doc:
             <a href="Exceptions$.html" class="extype" name="com.persist.Exceptions">package Exceptions</a>
           </div></span></h3><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -42,21 +42,18 @@
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">class</span>
+        <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">SystemException</span><span class="result"> extends <span class="extype" name="scala.Exception">Exception</span></span>
+        <span class="name">MappingException</span><span class="params">(<span name="msg">msg: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="path">path: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>)</span><span class="result"> extends <a href="Exceptions$$SystemException.html" class="extype" name="com.persist.Exceptions.SystemException">SystemException</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>This is the basic system exception.
-</p></div><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>This subclass of SystemException is used for errors that occur during mapping to or from a Scala object.
+</p></div><dl class="paramcmts block"><dt class="param">msg</dt><dd class="cmt"><p>the error message.</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="java.lang.Exception">Exception</span>, <span class="extype" name="java.lang.Throwable">Throwable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
-        </div><div class="toggleContainer block">
-            <span class="toggle">Known Subclasses</span>
-            <div class="subClasses hiddenContent"><a href="Exceptions$$JsonParseException.html" class="extype" name="com.persist.Exceptions.JsonParseException">JsonParseException</a>, <a href="Exceptions$$MappingException.html" class="extype" name="com.persist.Exceptions.MappingException">MappingException</a></div>
-          </div></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Exceptions$$SystemException.html" class="extype" name="com.persist.Exceptions.SystemException">SystemException</a>, <span class="extype" name="java.lang.Exception">Exception</span>, <span class="extype" name="java.lang.Throwable">Throwable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div></div>
         
 
       <div id="mbrsel">
@@ -73,7 +70,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.persist.Exceptions.SystemException"><span>SystemException</span></li><li class="in" name="java.lang.Exception"><span>Exception</span></li><li class="in" name="java.lang.Throwable"><span>Throwable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.persist.Exceptions.MappingException"><span>MappingException</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="com.persist.Exceptions.SystemException"><span>SystemException</span></li><li class="in" name="java.lang.Exception"><span>Exception</span></li><li class="in" name="java.lang.Throwable"><span>Throwable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -92,23 +89,23 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="com.persist.Exceptions.SystemException#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(kind:String,info:com.persist.JsonOps.Json):com.persist.Exceptions.SystemException"></a>
-      <a id="&lt;init&gt;:SystemException"></a>
+              <ol><li name="com.persist.Exceptions.MappingException#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="&lt;init&gt;(msg:String,path:String):com.persist.Exceptions.MappingException"></a>
+      <a id="&lt;init&gt;:MappingException"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">SystemException</span><span class="params">(<span name="kind">kind: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="info">info: <a href="JsonOps$.html#Json=Any" class="extmbr" name="com.persist.JsonOps.Json">Json</a></span>)</span>
+        <span class="name">MappingException</span><span class="params">(<span name="msg">msg: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="path">path: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@&lt;init&gt;(kind:String,info:com.persist.JsonOps.Json):com.persist.Exceptions.SystemException" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@&lt;init&gt;(msg:String,path:String):com.persist.Exceptions.MappingException" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">kind</dt><dd class="cmt"><p>the kind of Exception.</p></dd><dt class="param">info</dt><dd class="cmt"><p>detailed information about the exception.</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">msg</dt><dd class="cmt"><p>the error message.</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -130,7 +127,7 @@
         <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@!=(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -147,7 +144,7 @@
         <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@##():Int" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@##():Int" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -164,7 +161,7 @@
         <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@==(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@==(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -181,7 +178,7 @@
         <span class="name">addSuppressed</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="java.lang.Throwable">Throwable</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@addSuppressed(x$1:Throwable):Unit" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@addSuppressed(x$1:Throwable):Unit" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -198,7 +195,7 @@
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@asInstanceOf[T0]:T0" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -215,7 +212,7 @@
         <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@clone():Object" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@clone():Object" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -238,28 +235,11 @@
         <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="equals(x$1:Any):Boolean"></a>
-      <a id="equals(Any):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@equals(x$1:Any):Boolean" title="Permalink" target="_top">
-        <img src="../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="java.lang.Throwable#fillInStackTrace" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="fillInStackTrace():Throwable"></a>
       <a id="fillInStackTrace():Throwable"></a>
@@ -272,7 +252,7 @@
         <span class="name">fillInStackTrace</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Throwable">Throwable</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@fillInStackTrace():Throwable" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@fillInStackTrace():Throwable" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -289,7 +269,7 @@
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@finalize():Unit" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@finalize():Unit" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -312,7 +292,7 @@
         <span class="name">getCause</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Throwable">Throwable</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@getCause():Throwable" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@getCause():Throwable" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -329,7 +309,7 @@
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@getClass():Class[_]" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@getClass():Class[_]" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -346,7 +326,7 @@
         <span class="name">getLocalizedMessage</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@getLocalizedMessage():String" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@getLocalizedMessage():String" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -363,7 +343,7 @@
         <span class="name">getMessage</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@getMessage():String" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@getMessage():String" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -380,7 +360,7 @@
         <span class="name">getStackTrace</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="java.lang.StackTraceElement">StackTraceElement</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@getStackTrace():Array[StackTraceElement]" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@getStackTrace():Array[StackTraceElement]" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -397,29 +377,12 @@
         <span class="name">getSuppressed</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="java.lang.Throwable">Throwable</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@getSuppressed():Array[Throwable]" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@getSuppressed():Array[Throwable]" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Throwable</dd></dl></div>
-    </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="hashCode():Int"></a>
-      <a id="hashCode():Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@hashCode():Int" title="Permalink" target="_top">
-        <img src="../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="com.persist.Exceptions.SystemException#info" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="com.persist.Exceptions.SystemException#info" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="info:com.persist.JsonOps.Json"></a>
       <a id="info:Json"></a>
       <h4 class="signature">
@@ -431,11 +394,11 @@
         <span class="name">info</span><span class="result">: <a href="JsonOps$.html#Json=Any" class="extmbr" name="com.persist.JsonOps.Json">Json</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@info:com.persist.JsonOps.Json" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@info:com.persist.JsonOps.Json" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">detailed information about the exception.</p>
+      <p class="shortcomment cmt">detailed information about the exception.</p><div class="fullcomment"><div class="comment cmt"><p>detailed information about the exception.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Exceptions$$SystemException.html" class="extype" name="com.persist.Exceptions.SystemException">SystemException</a></dd></dl></div>
     </li><li name="java.lang.Throwable#initCause" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="initCause(x$1:Throwable):Throwable"></a>
       <a id="initCause(Throwable):Throwable"></a>
@@ -448,7 +411,7 @@
         <span class="name">initCause</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="java.lang.Throwable">Throwable</span></span>)</span><span class="result">: <span class="extype" name="java.lang.Throwable">Throwable</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@initCause(x$1:Throwable):Throwable" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@initCause(x$1:Throwable):Throwable" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -465,12 +428,12 @@
         <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="com.persist.Exceptions.SystemException#kind" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="com.persist.Exceptions.SystemException#kind" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="kind:String"></a>
       <a id="kind:String"></a>
       <h4 class="signature">
@@ -482,11 +445,28 @@
         <span class="name">kind</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@kind:String" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@kind:String" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">the kind of Exception.</p>
+      <p class="shortcomment cmt">the kind of Exception.</p><div class="fullcomment"><div class="comment cmt"><p>the kind of Exception.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Exceptions$$SystemException.html" class="extype" name="com.persist.Exceptions.SystemException">SystemException</a></dd></dl></div>
+    </li><li name="com.persist.Exceptions.MappingException#msg" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="msg:String"></a>
+      <a id="msg:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">msg</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@msg:String" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">the error message.</p>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -499,7 +479,7 @@
         <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -516,7 +496,7 @@
         <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@notify():Unit" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@notify():Unit" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -533,11 +513,28 @@
         <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@notifyAll():Unit" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@notifyAll():Unit" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="com.persist.Exceptions.MappingException#path" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="path:String"></a>
+      <a id="path:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">path</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@path:String" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="java.lang.Throwable#printStackTrace" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="printStackTrace(x$1:java.io.PrintWriter):Unit"></a>
       <a id="printStackTrace(PrintWriter):Unit"></a>
@@ -550,7 +547,7 @@
         <span class="name">printStackTrace</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="java.io.PrintWriter">PrintWriter</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@printStackTrace(x$1:java.io.PrintWriter):Unit" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@printStackTrace(x$1:java.io.PrintWriter):Unit" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -567,7 +564,7 @@
         <span class="name">printStackTrace</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="java.io.PrintStream">PrintStream</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@printStackTrace(x$1:java.io.PrintStream):Unit" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@printStackTrace(x$1:java.io.PrintStream):Unit" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -584,7 +581,7 @@
         <span class="name">printStackTrace</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@printStackTrace():Unit" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@printStackTrace():Unit" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -601,7 +598,7 @@
         <span class="name">setStackTrace</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="java.lang.StackTraceElement">StackTraceElement</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@setStackTrace(x$1:Array[StackTraceElement]):Unit" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@setStackTrace(x$1:Array[StackTraceElement]):Unit" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -618,7 +615,7 @@
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -635,12 +632,12 @@
         <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@toString():String" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@toString():String" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">Produces a standard text form to OStore exceptions.</p><div class="fullcomment"><div class="comment cmt"><p>Produces a standard text form to OStore exceptions.
-</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.persist.Exceptions.SystemException">SystemException</a> → Throwable → AnyRef → Any</dd></dl></div>
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Exceptions$$SystemException.html" class="extype" name="com.persist.Exceptions.SystemException">SystemException</a> → Throwable → AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -653,7 +650,7 @@
         <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@wait():Unit" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@wait():Unit" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -676,7 +673,7 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -699,7 +696,7 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#com.persist.Exceptions$$SystemException@wait(x$1:Long):Unit" title="Permalink" target="_top">
+      <a href="../../index.html#com.persist.Exceptions$$MappingException@wait(x$1:Long):Unit" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -719,7 +716,15 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="java.lang.Exception">
+        <div class="parent" name="scala.Serializable">
+              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="scala.Product">
+              <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
+            </div><div class="parent" name="scala.Equals">
+              <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
+            </div><div class="parent" name="com.persist.Exceptions.SystemException">
+              <h3>Inherited from <a href="Exceptions$$SystemException.html" class="extype" name="com.persist.Exceptions.SystemException">SystemException</a></h3>
+            </div><div class="parent" name="java.lang.Exception">
               <h3>Inherited from <span class="extype" name="java.lang.Exception">Exception</span></h3>
             </div><div class="parent" name="java.lang.Throwable">
               <h3>Inherited from <span class="extype" name="java.lang.Throwable">Throwable</span></h3>
