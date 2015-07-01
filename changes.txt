@@ -1,3 +1,9 @@
+6/30/2015 Version 1.0.0
+   Upgraded all versions.
+   Added some missing mapper codecs.
+   Replaced the old reflective mapper with the new
+   codec based mapper.
+   Added some missing ScalaDoc.
 3/9/2015
    Double Pretty and Compact now always use E notation.
 8/26/2014

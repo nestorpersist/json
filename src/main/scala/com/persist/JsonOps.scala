@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Persist Software
+ *  Copyright 2012-2015 Persist Software
  *  
  *   http://www.persist.com
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -117,30 +117,44 @@ object JsonOps {
   val emptyJsonArray = JsonArray()
 
   /**
-   *
    * A Json parser.
    *
+   * @param s  a Json string.
+   * @return the Json tree resulting from parsing the string.
    */
   def Json(s: String): Json = {
     parse(s)
   }
 
   /**
-   *
    * A Json unparser. It produces the most compact single line string form.
    *
+   * @param j a Json tree.
+   * @param safe  if false bad data types in tree will throw exceptions; if
+   *              true no exceptions are thrown and error information is included
+   *              in the output (default is false).
+   * @return  the Json string for the tree.
    */
-  def Compact(j: Json, safe:Boolean = false): String = {
+  def Compact(j: Json, safe: Boolean = false): String = {
     compact(j, safe)
   }
 
   /**
-   *
    * A Json unparser. It produces a multiple line form
    * designed for human readability.
    *
+   * @param j a Json tree.
+   * @param indent the number of characters to indent the entire output (default is 0).
+   * @param width the maximum number of character that should be on a line (default is 50).
+   *              This is only a goal; in practice some may contain more characters.
+   * @param count The maximum number of array elements that should be placed on a single
+   *              line (default is 6).
+   * @param safe  if false bad data types in tree will throw exceptions; if
+   *              true no exceptions are thrown and error information is included
+   *              in the output (default is false).
+   * @return
    */
-  def Pretty(j: Json, indent: Int = 0, width: Int = 50, count: Int = 6, safe:Boolean = false): String = {
+  def Pretty(j: Json, indent: Int = 0, width: Int = 50, count: Int = 6, safe: Boolean = false): String = {
     pretty(j, indent, width, count, safe)
   }
 
@@ -169,9 +183,7 @@ object JsonOps {
             null
           }
         }
-        //case (a1: JsonObject @unchecked, i1: String) => {
-        //  a1.asInstanceOf[JsonObject].get(i1) match {
-        case (a1: scala.collection.Map[String, Json] @unchecked, i1: String) => {
+        case (a1: scala.collection.Map[String, Json]@unchecked, i1: String) => {
           a1.getOrElse(i1, null)
         }
         case _ => null
@@ -560,13 +572,13 @@ object JsonOps {
    *              - An integer i selects the ith elements of a JsonArray.
    *
    * @example {{{
-   *                                                                 val A = jfield("a")
-   *                                                                 val B = jfield("b")
-   *                                                                 val C = jfield("c")
-   *                                                                 jval match {
-   *                                                                   case a:A & b:B => foo(a,b)
-   *                                                                   case c:C => bar(c)
-   *                                                                 }
+   *                                                                           val A = jfield("a")
+   *                                                                           val B = jfield("b")
+   *                                                                           val C = jfield("c")
+   *                                                                           jval match {
+   *                                                                             case a:A & b:B => foo(a,b)
+   *                                                                             case c:C => bar(c)
+   *                                                                           }
    *          }}}
    *
    */
@@ -586,13 +598,13 @@ object JsonOps {
    * An extractor composition operator.
    *
    * @example {{{
-   *                                                                 val A = jfield("a")
-   *                                                                 val B = jfield("b")
-   *                                                                 val C = jfield("c")
-   *                                                                 jval match {
-   *                                                                   case a:A & b:B => foo(a,b)
-   *                                                                   case c:C => bar(c)
-   *                                                                 }
+   *                                                                           val A = jfield("a")
+   *                                                                           val B = jfield("b")
+   *                                                                           val C = jfield("c")
+   *                                                                           jval match {
+   *                                                                             case a:A & b:B => foo(a,b)
+   *                                                                             case c:C => bar(c)
+   *                                                                           }
    *          }}}
    *
    */

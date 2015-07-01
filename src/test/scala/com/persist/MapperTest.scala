@@ -22,9 +22,10 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FunSuite
 import com.persist.JsonOps._
 import com.persist.JsonMapper._
+import com.persist.json._
 
-case class Person1(name: String, age: Option[Int], friend: Option[Person])
-case class Group1(city: String, people: Seq[Person1], var cnt: Int, props: JsonObject, value:BigDecimal)
+case class Person(name: String, age: Option[Int], friend: Option[Person])
+case class Group(city: String, people: Seq[Person], var cnt: Int, props: JsonObject, value:BigDecimal)
 
 @RunWith(classOf[JUnitRunner])
 class MapperTest extends FunSuite {
@@ -37,9 +38,7 @@ class MapperTest extends FunSuite {
                                  {name:"Tom", age:20}]
                         }""")
 
-    //val mv = ToObject[Map[String,Json]](Map("a"->3,"b"->"foo"))
-    //val iv = ToObject[Integer](17)
-    val group: Group1 = ToObject[Group1](j)
+    val group: Group = ToObject[Group](j)
     val j1: Json = ToJson(group)
 
     assert(j1 === j, "mapper fail")
