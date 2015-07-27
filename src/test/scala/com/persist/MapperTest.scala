@@ -25,7 +25,9 @@ import com.persist.JsonMapper._
 import com.persist.json._
 
 case class Person(name: String, age: Option[Int], friend: Option[Person])
-case class Group(city: String, people: Seq[Person], var cnt: Int, props: JsonObject, value:BigDecimal)
+
+case class Group(city: String, people: Seq[Person], kinds:Array[String],
+                 var cnt: Int, props: JsonObject, value: BigDecimal)
 
 @RunWith(classOf[JUnitRunner])
 class MapperTest extends FunSuite {
@@ -33,12 +35,13 @@ class MapperTest extends FunSuite {
   test("mapper") {
 
 
-    val j: Json = Json("""{city:"Seattle", cnt:2, props:{i:1, j:2}, value:2.3,
+    val j: Json = Json( """{city:"Seattle", cnt:2, props:{i:1, j:2}, value:2.3,
                          people:[{name:"Joe", friend:{name:"Sam"}},
-                                 {name:"Tom", age:20}]
+                                 {name:"Tom", age:20}], kinds:["red","blue"]
                         }""")
 
-    val group: Group = ToObject[Group](j)
+    val group = ToObject[Group](j)
+
     val j1: Json = ToJson(group)
 
     assert(j1 === j, "mapper fail")

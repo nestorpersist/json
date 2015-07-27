@@ -26,6 +26,8 @@ import shapeless.labelled._
 import shapeless.syntax.typeable._
 
 import scala.annotation.implicitNotFound
+import scala.reflect.ClassTag
+
 //import scala.reflect.runtime.universe.{TypeTag, typeOf}
 import scala.util.Try
 
@@ -195,7 +197,7 @@ package object json {
         _.map(implicitly[ReadCodec[T]].read(_))
       ) getOrElse (
         throw new MappingException(s"Expected JsonArray but found $json")
-      )
+        )
 
     implicit def set[T: ReadCodec] = new ReadCodec[Set[T]] {
       def read(json: Json): Set[T] = extractSeq[T](json).toSet
@@ -208,6 +210,12 @@ package object json {
     implicit def seq[T: ReadCodec] = new ReadCodec[Seq[T]] {
       def read(json: Json): Seq[T] = extractSeq[T](json)
     }
+
+    implicit def arr[T: ReadCodec](implicit T1:ClassTag[T]) = new ReadCodec[Array[T]] {
+      def read(json: Json): Array[T] = extractSeq[T](json).toArray[T]
+    }
+
+    //val x = arr[ReadCodec[Int]]
 
     implicit def simpleMap[V: ReadCodec] = new ReadCodec[Map[String, V]] {
       def read(json: Json): Map[String, V] = castOrThrow(json).mapValues(implicitly[ReadCodec[V]].read(_))
@@ -322,11 +330,14 @@ package object json {
     implicit def seq[V: WriteCodec] = new WriteCodec[Seq[V]] {
       def write(obj: Seq[V]): JsonArray = obj.map(toJson(_))
     }
-    implicit def option[V: WriteCodec] = new WriteCodec[Option[V]] {
-      def write(obj: Option[V]): Json = obj.map(toJson(_)).getOrElse(jnull)
+    implicit def option[V:WriteCodec] = new WriteCodec[Option[V]] {
+      def write(obj: Option[V]):Json = obj.map(toJson(_)).getOrElse(jnull)
+    }
+    implicit def arr[V: WriteCodec] = new WriteCodec[Array[V]] {
+      def write(obj: Array[V]): Json = obj.map(toJson(_)).toSeq
     }
 
-    implicit val byteBuffer = new WriteCodec[ByteBuffer] {
+        implicit val byteBuffer = new WriteCodec[ByteBuffer] {
       def write(obj: ByteBuffer): String = obj.array().slice(obj.position(),obj.limit()).map(_.toChar).mkString
     }
 

@@ -27,7 +27,9 @@
 
 package com.persist
 
-import scala.collection.immutable.HashMap
+import java.io.StringWriter
+
+import scala.collection.immutable.{ListMap, HashMap}
 import JsonOps._
 import scala.util.Sorting
 import Exceptions._
@@ -489,14 +491,14 @@ private[persist] class JsonParse(s: String) {
 }
 
 private[persist] object JsonUnparse {
-
+  /*
   private def quotedChar(codePoint: Int) = {
     codePoint match {
       case c if c > 0xffff =>
         val chars = Character.toChars(c)
         "\\u%04x\\u%04x".format(chars(0).toInt, chars(1).toInt)
       case c if (c > 0x7e || c < 0x20) => "\\u%04x".format(c.toInt)
-      case c => c.toChar
+      case c => c.toChar.toString
     }
   }
 
@@ -511,12 +513,15 @@ private[persist] object JsonUnparse {
     false
   }
 
-  private def quote(s: String): String = {
-    if (!mustQuote(s)) return s
+  private def OLDquote(sb: StringBuilder, s: String) {
+    if (!mustQuote(s)) {
+      sb.append(s)
+      return
+    } //return s
     val charCount = s.codePointCount(0, s.length)
-    0.to(charCount - 1).map {
+    0.to(charCount - 1).foreach {
       idx =>
-        s.codePointAt(s.offsetByCodePoints(0, idx)) match {
+        val result = s.codePointAt(s.offsetByCodePoints(0, idx)) match {
           case 0x0d => "\\r"
           case 0x0a => "\\n"
           case 0x09 => "\\t"
@@ -525,29 +530,67 @@ private[persist] object JsonUnparse {
           //case 0x2f => "\\/" // to avoid sending "</"
           case c => quotedChar(c)
         }
-    }.mkString("")
+        sb.append(result)
+    } //.mkString("")
+  }
+  */
+
+  def quote(sb: StringBuilder, s: String) {
+    s.foreach {
+      case ch =>
+        (ch: @switch) match {
+          case '\r' => sb.append("\\r")
+          case '\n' => sb.append("\\n")
+          case '\t' => sb.append("\\t")
+          case '"' => sb.append("\\\"")
+          case '\\' => sb.append("\\\\")
+          case '\u00ff' => sb.append("\u00ff")
+          case c =>
+            if (ch < ' ') {
+              if (c <= 0xF) sb.append("\\u000").append(Integer.toHexString(c))
+              else if (c <= 0xFF) sb.append("\\u00").append(Integer.toHexString(c))
+              else if (c <= 0xFFF) sb.append("\\u0").append(Integer.toHexString(c))
+              else sb.append("\\u").append(Integer.toHexString(c))
+            } else {
+              sb.append(ch)
+            }
+        }
+    }
   }
 
-  def compact(obj: Json, safe: Boolean): String = {
-    val sb = new StringBuilder(1000)
-    //val sb = SB(1000)
+
+  def compact(obj: Json, safe: Boolean, sort: Boolean): String = {
+    val sb = new StringBuilder(500)
     def compact1(obj1: Json) {
       obj1 match {
         case s: String => {
           sb.append("\"")
-          sb.append(quote(s))
+          quote(sb, s)
           sb.append("\"")
         }
-        case x: Int => sb.append(x.toString)
-        case x: Long => sb.append(x.toString)
-        case x: BigDecimal => sb.append(x.toString)
-        case x: Double =>
-          sb.append("%1$e".format(x))   // g->e
-        case x: Float =>
-          sb.append("%1$e".format(x))   // g->e
-        case x: Number => sb.append(x.toString)
-        case null => sb.append("null")
-        case x: Boolean => sb.append(x.toString)
+        case m: scala.collection.Map[_, _] => {
+          if (m.isEmpty) {
+            sb.append("{}")
+          } else {
+            val m3 = if (sort) {
+              val m2 = m.asInstanceOf[scala.collection.Map[String, Json]].iterator.toList
+              ListMap(m2.toSeq.sortBy(_._1): _*)
+            } else {
+              m
+            }
+            var sep = "{"
+            for ((name, elem) <- m) {
+              sb.append(sep)
+              sb.append("\"")
+              quote(sb, name.asInstanceOf[String])
+              sb.append("\":")
+              compact1(elem)
+              sep = ","
+            }
+
+            sb.append("}")
+          }
+        }
         case list: Seq[_] => {
           if (list.isEmpty) {
             sb.append("[]")
@@ -561,27 +604,16 @@ private[persist] object JsonUnparse {
             sb.append("]")
           }
         }
-        case m: scala.collection.Map[_, _] => {
-          if (m.isEmpty) {
-            sb.append("{}")
-          } else {
-            val m2 = m.asInstanceOf[scala.collection.Map[String, Json]].iterator.toList
-            val m1 = Sorting.stableSort[(String, Json), String](m2, {
-              case (k, v) => k
-            })
-            //val m1 = m2
-            var sep = "{"
-            for ((name, elem) <- m1) {
-              sb.append(sep)
-              sb.append("\"")
-              sb.append(quote(name))
-              sb.append("\":")
-              compact1(elem)
-              sep = ","
-            }
-            sb.append("}")
-          }
-        }
+        case x: Int => sb.append(x.toString)
+        case x: Long => sb.append(x.toString)
+        case x: BigDecimal => sb.append(x.toString)
+        case x: Double =>
+          sb.append("%1$e".format(x)) // g->e
+        case x: Boolean => sb.append(x.toString)
+        case x: Float =>
+          sb.append("%1$e".format(x)) // g->e
+        case x: Number => sb.append(x.toString)
+        case null => sb.append("null")
         case x => if (safe) {
           val bad = JsonObject("BAD1" -> x.toString)
           compact1(bad)
@@ -642,8 +674,8 @@ private[persist] object JsonUnparse {
     obj match {
       case null => doIndent("null", indent)
       case x: Boolean => doIndent(x.toString, indent)
-      case x: Double => doIndent("%1$e".format(x), indent)  // g=>e
-      case x: Float => doIndent("%1$e".format(x), indent)  // g=>e
+      case x: Double => doIndent("%1$e".format(x), indent) // g=>e
+      case x: Float => doIndent("%1$e".format(x), indent) // g=>e
       case x: Number => doIndent(x.toString, indent)
       case array: Array[Json] => pretty(array.toList, indent, width, count, safe)
       case list: Seq[_] =>
@@ -660,7 +692,11 @@ private[persist] object JsonUnparse {
         val strings = seq2.map {
           case (k, v) => {
             val v1 = pretty(v, indent, width, count, safe)
-            val label = "\"" + quote(k.toString) + "\":"
+            val sb = new StringBuilder(500)
+            sb.append("\"")
+            quote(sb, k.toString)
+            sb.append("\":")
+            val label = sb.toString
             if (isMultiLine(v1) || label.size + v1.size > width) {
               label + "\n" + doIndent(v1, 2)
             } else {
@@ -673,7 +709,12 @@ private[persist] object JsonUnparse {
         } else {
           wrap("{", ",", "}", indent, strings)
         }
-      case s: String => doIndent("\"" + quote(s) + "\"", indent)
+      case s: String =>
+        val sb = new StringBuilder(500)
+        sb.append("\"")
+        quote(sb, s)
+        sb.append("\"")
+        doIndent(sb.toString, indent)
       case x =>
         if (safe) {
           val bad = JsonObject("BAD" -> x.toString)

@@ -133,10 +133,12 @@ object JsonOps {
    * @param safe  if false bad data types in tree will throw exceptions; if
    *              true no exceptions are thrown and error information is included
    *              in the output (default is false).
+   * @param sort if false, fields in maps are not sorted and
+   *              performance is improved.
    * @return  the Json string for the tree.
    */
-  def Compact(j: Json, safe: Boolean = false): String = {
-    compact(j, safe)
+  def Compact(j: Json, safe: Boolean = false, sort:Boolean = true): String = {
+    compact(j, safe, sort)
   }
 
   /**
