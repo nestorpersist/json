@@ -1,3 +1,5 @@
+1/82016 Version 1.1.1
+   Fixed bug in compact sort
 7/27/2015 Version 1.1.0
    Added sort parameter to Compact.
    Compact is now faster.

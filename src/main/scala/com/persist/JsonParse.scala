@@ -579,7 +579,7 @@ private[persist] object JsonUnparse {
               m
             }
             var sep = "{"
-            for ((name, elem) <- m) {
+            for ((name, elem) <- m3) {
               sb.append(sep)
               sb.append("\"")
               quote(sb, name.asInstanceOf[String])
