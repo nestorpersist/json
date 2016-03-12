@@ -1,4 +1,6 @@
-1/82016 Version 1.1.1
+3/12/2016 Version 1.1.2
+   Updated dependency versions
+1/8/2016 Version 1.1.1
    Fixed bug in compact sort
 7/27/2015 Version 1.1.0
    Added sort parameter to Compact.

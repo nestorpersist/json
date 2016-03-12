@@ -2,7 +2,7 @@ name := "persist-json"
 
 organization := "com.persist"
 
-version := "1.1.1"
+version := "1.1.2"
 
 scalaVersion := "2.11.7"
 
@@ -25,6 +25,8 @@ publishTo <<= version { v: String =>
   else
     Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
+
+useGpg := true
 
 publishMavenStyle := true
 
