@@ -330,6 +330,12 @@ package object json {
     implicit def seq[V: WriteCodec] = new WriteCodec[Seq[V]] {
       def write(obj: Seq[V]): JsonArray = obj.map(toJson(_))
     }
+    implicit def list[V: WriteCodec] = new WriteCodec[List[V]] {
+      def write(obj: List[V]): JsonArray = obj.map(toJson(_))
+    }
+    implicit def vector[V: WriteCodec] = new WriteCodec[Vector[V]] {
+      def write(obj: Vector[V]): JsonArray = obj.map(toJson(_))
+    }
     implicit def option[V:WriteCodec] = new WriteCodec[Option[V]] {
       def write(obj: Option[V]):Json = obj.map(toJson(_)).getOrElse(jnull)
     }
