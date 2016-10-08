@@ -636,7 +636,7 @@ private[persist] object JsonUnparse {
       case x: Number => doIndent(x.toString, indent)
       case array: Array[Json] => pretty(array.toList, indent, width, count, safe)
       case list: Seq[_] =>
-        val strings = list.map(pretty(_, indent, width, count, safe))
+        val strings = list.map(pretty(_, 0, width, count, safe))
         if (!split(strings, width, count)) {
           doIndent("[" + strings.mkString(",") + "]", indent)
         } else {
@@ -648,7 +648,7 @@ private[persist] object JsonUnparse {
         })
         val strings = seq2.map {
           case (k, v) => {
-            val v1 = pretty(v, indent, width, count, safe)
+            val v1 = pretty(v, 0, width, count, safe)
             val sb = new StringBuilder(500)
             sb.append("\"")
             quote(sb, k.toString)

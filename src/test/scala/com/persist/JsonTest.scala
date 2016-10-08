@@ -50,7 +50,7 @@ class JsonTest extends FunSuite {
     val j = Json(s)
     jput(j, "js")(5.toShort) // test short value
     val c = Compact(j)
-    val p = Pretty(j)
+    val p = Pretty(j,indent=2)
     println(p)
     val j1 = Json(c)
     assert(jget(j,"h").getClass== jget(j1,"h").getClass) // make sure both are double
