@@ -15,6 +15,8 @@ It includes:
 
 Persist-Json can be referenced in sbt from Maven Central as
 
+    "com.persist" % "persist-json_2.12" % "1.2.0"
+    
     "com.persist" % "persist-json_2.11" % "1.1.3"
 
 ## History
