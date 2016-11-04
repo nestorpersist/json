@@ -2,9 +2,9 @@ name := "persist-json"
 
 organization := "com.persist"
 
-version := "1.1.4"
+version := "1.2.0"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.12.0"
 
 scalacOptions ++= Seq("-deprecation", "-unchecked")
 
@@ -12,9 +12,9 @@ viewSettings
 
 libraryDependencies ++= Seq(
         "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-        "com.chuusai" %% "shapeless" % "2.3.0",
-        "org.scalatest" %% "scalatest" % "2.2.6" % "test",
-        "org.specs2" %% "specs2-core" % "3.7.2" % "test",
+        "com.chuusai" %% "shapeless" % "2.3.2",
+        "org.scalatest" %% "scalatest" % "3.0.0" % "test",
+        "org.specs2" %% "specs2-core" % "3.8.6" % "test",
         "junit" % "junit" % "4.12" % "test"
 )
 
