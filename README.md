@@ -1,4 +1,4 @@
-[![Latest version](https://index.scala-lang.org/com.persist/persist-json_2.12/1.2.0/latest.svg)](https://index.scala-lang.org/com.persist/persist-json_2.12/1.2.0)
+[![Latest version](https://index.scala-lang.org/com.persist/persist-json/1.2.0/latest.svg)](https://index.scala-lang.org/com.persist/persist-json/1.2.0)
 
 Persist-Json is a new fast Json parser written in Scala.
 It includes:
