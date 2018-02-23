@@ -37,6 +37,12 @@ import scala.annotation.switch
 
 private[persist] object JsonParse {
 
+  val IntMinValueBI = BigInt(Int.MinValue)
+  val IntMaxValueBI = BigInt(Int.MaxValue)
+
+  val LongMinValueBI = BigInt(Long.MinValue)
+  val LongMaxValueBI = BigInt(Long.MaxValue)
+
   // *** Character Kinds
 
   final type CharKind = Int
@@ -122,6 +128,7 @@ private[persist] object JsonParse {
 }
 
 private[persist] class JsonParse(s: String) {
+  import JsonParse._
 
   // *** Import Shared Data ***
 
@@ -446,10 +453,19 @@ private[persist] class JsonParse(s: String) {
         val v = try {
           tokenValue.toLong
         } catch {
+          case _: NumberFormatException =>
+            BigInt(tokenValue)
           case _: Throwable => tokenError("Bad integer")
         }
         tokenNext
-        val r: Json = if (v >= Int.MinValue && v <= Int.MaxValue) v.toInt else v
+        val r: Json = v match {
+          case i: Int => i
+          case l: Long => if(l >= Int.MinValue && l <= Int.MaxValue) l.toInt else l
+          case bi: BigInt =>
+            if (bi >= IntMinValueBI && bi <= IntMaxValueBI) bi.toInt
+            else if (bi >= LongMinValueBI && bi <= LongMaxValueBI) bi.toLong
+            else bi
+        }
         r
       }
       case BIGNUMBER => {

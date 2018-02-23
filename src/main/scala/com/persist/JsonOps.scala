@@ -449,6 +449,13 @@ object JsonOps {
    */
   def jgetInt(a: Json, ilist: Any*): Int = {
     jget(a, ilist: _*) match {
+      case bi: BigInt =>
+        val i = bi.toInt
+        if(BigInt(i) == bi) {
+          i
+        } else {
+          0
+        }
       case l: Long => {
         val i = l.toInt
         if (i == l) {
@@ -476,8 +483,36 @@ object JsonOps {
    */
   def jgetLong(a: Json, ilist: Any*): Long = {
     jget(a, ilist: _*) match {
+      case bi: BigInt =>
+        val l = bi.toLong
+        if(BigInt(l) == bi) {
+          l
+        } else {
+          0L
+        }
       case l: Long => l
       case i: Int => i
+      case x => 0
+    }
+  }
+
+  /**
+    *
+    * Get a BitInt value within a nested Json value.
+    *
+    * @param ilist a list of values that are either strings or integers
+    *              - A string selects the value of a JsonObject name-value pair where
+    *              the name equals the string.
+    *              - An integer i selects the ith elements of a JsonArray.
+    *
+    * @return the selected long value or 0 if not present.
+    *
+    */
+  def jgetBigInt(a: Json, ilist: Any*): BigInt = {
+    jget(a, ilist: _*) match {
+      case bi: BigInt => bi
+      case l: Long => BigInt(l)
+      case i: Int => BigInt(i)
       case x => 0
     }
   }
@@ -498,6 +533,7 @@ object JsonOps {
     jget(a, ilist: _*) match {
       case b: BigDecimal => b
       case d: Double => BigDecimal(d)
+      case bi: BigInt => BigDecimal(bi)
       case l: Long => l
       case i: Int => i
       case x => 0
@@ -520,6 +556,7 @@ object JsonOps {
     jget(a, ilist: _*) match {
       case d: Double => d
       case b: BigDecimal => b.toDouble
+      case bi: BigInt => bi.toDouble
       case l: Long => l
       case i: Int => i
       case x => 0

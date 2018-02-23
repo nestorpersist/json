@@ -2,9 +2,9 @@ name := "persist-json"
 
 organization := "com.persist"
 
-version := "1.2.0"
+version := "1.2.1-SNAPSHOT"
 
-scalaVersion := "2.12.0"
+scalaVersion := "2.12.3"
 
 scalacOptions ++= Seq("-deprecation", "-unchecked")
 
