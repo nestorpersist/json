@@ -579,6 +579,7 @@ private[persist] object JsonUnparse {
         }
         case x: Int => sb.append(x.toString)
         case x: Long => sb.append(x.toString)
+        case x: BigInt => sb.append(x.toString)
         case x: BigDecimal => sb.append(x.toString)
         case x: Double =>
           sb.append("%1$e".format(x)) // g->e
