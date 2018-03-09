@@ -47,6 +47,8 @@ class MapperTest extends FunSuite {
     case map: Map[_, _] =>
       val m1 = map filter ({ case (_, v) => v != null })
       m1 mapValues (removeNullValuedFields)
+    case seq: Seq[_] =>
+      seq map (removeNullValuedFields)
     case x => x
   }
 

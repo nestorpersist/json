@@ -292,8 +292,8 @@ package object json {
         def read(json: Json): FieldType[K, Option[V]] :: T = {
           val map = castOrThrow(json)
           val name = key.value.name
-          // This is so that we gracefully handle a missing field if it's type is optional
-          val fieldValue = map.get(name)
+          // This is so that we gracefully handle a missing or null-valued field if it's type is optional
+          val fieldValue = map.get(name).flatMap(Option(_))
           // Try reading the value of the field
           // If we get a mapping exception, intercept it and add the name of this field to the path
           // If we get another exception, don't touch!
