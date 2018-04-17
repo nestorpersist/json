@@ -80,6 +80,12 @@ package object json {
 
   object ReadCodec extends LowPriorityReadCodec {
 
+    val ShortMinValueAsBI = BigInt(Short.MinValue)
+    val ShortMaxValueAsBI = BigInt(Short.MaxValue)
+
+    val ByteMinValueAsBI = BigInt(Byte.MinValue)
+    val ByteMaxValueAsBI = BigInt(Byte.MaxValue)
+
     def apply[T](implicit st: Lazy[ReadCodec[T]]): ReadCodec[T] = st.value
 
     implicit val string = new ReadCodec[String] {
@@ -96,7 +102,10 @@ package object json {
         case x: Short => x.toInt
         case x: Int => x
         case x: Long =>
-          if (x <= Int.MaxValue) x.toInt
+          if (x >= Int.MinValue && x <= Int.MaxValue) x.toInt
+          else throw new MappingException(s"Expected number that can fit into an Int, but found $x")
+        case x: BigInt =>
+          if (x >= Int.MinValue && x <= Int.MaxValue) x.toInt
           else throw new MappingException(s"Expected number that can fit into an Int, but found $x")
         case _ => throw new MappingException(s"Expected: Int but found $x")
       }
@@ -110,6 +119,9 @@ package object json {
         case x: Int => x.toLong
         case x: Short => x.toLong
         case x: Long => x
+        case x: BigInt =>
+          if (x >= Long.MinValue && x <= Long.MaxValue) x.toLong
+          else throw new MappingException(s"Expected number that can fit into a Long, but found $x")
         case _ => throw new MappingException(s"Expected: Long but found $x")
       }
     }
@@ -119,10 +131,13 @@ package object json {
         case x: Byte => x.toShort
         case x: Short => x
         case x: Int =>
-           if (x <= Short.MaxValue) x.toShort
+           if (x >= Short.MinValue && x <= Short.MaxValue) x.toShort
            else precisionException(x)
         case x: Long =>
-          if (x <= Short.MaxValue) x.toShort
+          if (x >= Short.MinValue && x <= Short.MaxValue) x.toShort
+          else precisionException(x)
+        case x: BigInt =>
+          if (x >= ShortMinValueAsBI && x <= ShortMinValueAsBI) x.toShort
           else precisionException(x)
         case _ => throw new MappingException(s"Expected: Short, but found $x")
       }
@@ -132,23 +147,28 @@ package object json {
       def read(x: Json): Byte = x match {
         case x: Byte => x
         case x: Int =>
-          if (x <= Byte.MaxValue) x.toByte
+          if (x >= Byte.MinValue && x <= Byte.MaxValue) x.toByte
           else precisionException(x)
         case x: Short =>
-          if (x <= Byte.MaxValue) x.toByte
+          if (x >= Byte.MinValue && x <= Byte.MaxValue) x.toByte
           else precisionException(x)
         case x: Long =>
-          if (x <= Short.MaxValue) x.toByte
+          if (x >= Byte.MinValue && x <= Byte.MaxValue) x.toByte
+          else precisionException(x)
+        case x: BigInt =>
+          if (x >= ByteMinValueAsBI && x <= ByteMinValueAsBI) x.toByte
           else precisionException(x)
         case _ => throw new MappingException(s"Expected: Byte, but found $x")
       }
     }
     implicit val double = new ReadCodec[Double] {
       def read(x: Json): Double = x match {
+        case x: Byte => x.toDouble
         case x: Int => x.toDouble
         case x: Float => x.toDouble
         case x: Short => x.toDouble
         case x: Long => x.toDouble
+        case x: BigInt => x.toDouble
         case x: BigDecimal => x.toDouble
         case x: Double => x
         case _ => throw new MappingException(s"Expected: Double, but found $x")
@@ -156,23 +176,40 @@ package object json {
     }
     implicit val float = new ReadCodec[Float] {
       def read(x: Json): Float = x match {
+        case x: Byte => x.toFloat
         case x: Float => x
         case x: Double => x.toFloat
         case x: Int => x.toFloat
         case x: Short => x.toFloat
         case x: Long => x.toFloat
+        case x: BigInt => x.toFloat
         case x: BigDecimal => x.toFloat
         case _ => throw new MappingException(s"Expected Float, but found $x")
       }
     }
+    implicit val bigInteger = new ReadCodec[BigInt] {
+      def read(x: Json): BigInt = x match {
+        case x: Byte => BigInt(x)
+        case x: BigDecimal => x.toBigInt()
+        case x: Float => BigDecimal(x.toDouble).toBigInt()
+        case x: Double => BigDecimal(x).toBigInt()
+        case x: Int => BigInt(x)
+        case x: Short => BigInt(x)
+        case x: Long => BigInt(x)
+        case x: BigInt => x
+        case _ => throw new MappingException(s"Expected BigDecimal, but found $x")
+      }
+    }
     implicit val bigDecimal = new ReadCodec[BigDecimal] {
       def read(x: Json): BigDecimal = x match {
+        case x: Byte => BigDecimal(x)
         case x: BigDecimal => x
         case x: Float => BigDecimal(x.toDouble)
         case x: Double => BigDecimal(x)
         case x: Int => BigDecimal(x)
         case x: Short => BigDecimal(x)
         case x: Long => BigDecimal(x)
+        case x: BigInt => BigDecimal(x)
         case _ => throw new MappingException(s"Expected BigDecimal, but found $x")
       }
     }
@@ -255,8 +292,8 @@ package object json {
         def read(json: Json): FieldType[K, Option[V]] :: T = {
           val map = castOrThrow(json)
           val name = key.value.name
-          // This is so that we gracefully handle a missing field if it's type is optional
-          val fieldValue = map.get(name)
+          // This is so that we gracefully handle a missing or null-valued field if it's type is optional
+          val fieldValue = map.get(name).flatMap(Option(_))
           // Try reading the value of the field
           // If we get a mapping exception, intercept it and add the name of this field to the path
           // If we get another exception, don't touch!
@@ -308,6 +345,7 @@ package object json {
     implicit object ShortCodec extends SimpleCodec[Short]
     implicit object ByteCodec extends SimpleCodec[Byte]
     implicit object DoubleCodec extends SimpleCodec[Double]
+    implicit object BigIntCodec extends SimpleCodec[BigInt]
     implicit object BigDecimalCodec extends SimpleCodec[BigDecimal]
     implicit object IntegerCodec extends SimpleCodec[Integer]
     implicit def simpleMap[V: WriteCodec] = new WriteCodec[scala.collection.Map[String, V]] {
